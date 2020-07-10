@@ -21,6 +21,8 @@ public class DBFMS extends Application {
 	    
         Scene scene = new Scene(root, 1600, 900);
     
+        stage.setMinWidth(1000);
+        stage.setMinHeight(1000.0f * 9.0f / 16.0f);
         stage.setTitle("DBFMS");
         //stage.getIcons().add(icon);
         stage.setScene(scene);

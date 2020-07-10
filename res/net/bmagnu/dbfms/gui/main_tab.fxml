@@ -10,9 +10,9 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
-<HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.bmagnu.dbfms.gui.GUIMainTab">
+<HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="-Infinity" prefWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.bmagnu.dbfms.gui.GUIMainTab">
    <children>
-      <VBox minWidth="250.0" prefHeight="200.0" prefWidth="400.0">
+      <VBox minWidth="400.0" prefHeight="200.0" prefWidth="400.0">
          <children>
             <VBox prefWidth="100.0" spacing="10.0">
                <VBox.margin>
@@ -30,7 +30,7 @@
               </content>
             </ScrollPane>
          </children></VBox>
-      <ScrollPane fx:id="fileScrollPane" hbarPolicy="NEVER" minWidth="600.0" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
+      <ScrollPane fx:id="fileScrollPane" hbarPolicy="NEVER" vbarPolicy="ALWAYS" HBox.hgrow="ALWAYS">
          <content>
             <TilePane fx:id="filePane" hgap="20.0" prefWidth="${fileScrollPane.width}" vgap="20.0">
                <padding>
