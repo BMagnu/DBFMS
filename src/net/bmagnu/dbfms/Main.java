@@ -17,7 +17,7 @@ import javafx.util.Pair;
 
 public class Main {
 	public static void main(String[] args) {
-		//launch(DBFMS.class, args);
+		launch(DBFMS.class, args);
 		
 		/*List<Map<String, Object>> tables = LocalDatabase.executeSQL("SELECT * FROM sys.systables", "TABLENAME");
 		for(Map<String, Object> table : tables) {
@@ -26,7 +26,7 @@ public class Main {
 		}*/
 		
 		//LocalDatabase.executeSQL("CREATE TABLE test(Test1 INT, Test2 VARCHAR(255))", true);
-		Collection collection = new Collection("test", "a", "b", "c");
+		//Collection collection = new Collection("test", 3);
 		
 		/*tables = LocalDatabase.executeSQL("SELECT * FROM sys.systables", "TABLENAME");
 		for(Map<String, Object> table : tables) {
@@ -34,7 +34,7 @@ public class Main {
 				System.out.println(value.getKey() + ": " + (String)value.getValue());
 		}*/
 		
-		collection.emplaceTag("1", "");
+		/*collection.emplaceTag("1", "");
 		collection.emplaceTag("2", "");
 		collection.emplaceTag("3", "");
 		
@@ -89,11 +89,11 @@ public class Main {
 		
 		System.out.println();
 		
-		Map<Integer, String> test = collection.queryFiles("+f:te rating>2.2");
+		Map<Integer, String> test = collection.queryFiles("+f:te rating>2r");
 		for(Integer value : test.keySet())
 			System.out.println(value);
 		
-		System.out.println();
+		System.out.println();*/
 		
 		/*test = collection.queryFiles("1 ~2");
 		for(Integer value : test.keySet())

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.bmagnu.dbfms.gui.GUIMainWindow">
+   <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#menuFile_onCreateCollection" text="Create Collection" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Database">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#menuDB_onBackup" text="Backup Database" />
+              </items>
+            </Menu>
+            <Menu fx:id="collectionMenu" disable="true" mnemonicParsing="false" text="Collection">
+              <items>
+                <MenuItem mnemonicParsing="false" onAction="#menuCollection_onManageTags" text="Manage Tags" />
+                  <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddFile" text="Add File" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+      <TabPane fx:id="collectionTabs" onDragDropped="#tab_droppedFile" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" />
+   </children>
+</VBox>

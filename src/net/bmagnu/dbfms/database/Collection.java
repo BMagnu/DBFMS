@@ -22,7 +22,7 @@ import static net.bmagnu.dbfms.database.LocalDatabase.executeTransaction;
 public class Collection {
 
 	public final String name;
-	public final String[] types;
+	public final int typeCount;
 	
 	public final DBFile fileDB;
 	public final DBTag tagDB;
@@ -31,9 +31,9 @@ public class Collection {
 	public final DBTypeValues typeValuesDB;
 	public final DBFileTypes fileTypesDB;
 	
-	public Collection(String name, String... types) {
+	public Collection(String name, int typeCount) {
 		this.name = name;
-		this.types = types;
+		this.typeCount = typeCount;
 		
 		fileDB = new DBFile(name);
 		tagDB = new DBTag(name);
@@ -166,7 +166,7 @@ public class Collection {
 	}
 	
 	public void emplaceFile(String filePath, String thumbnail, float rating, Map<String, String> types) {
-		if(types.size() != this.types.length) {
+		if(types.size() != this.typeCount) {
 			Logger.logError("Specified types do not match Collection types");
 			return;
 		}
