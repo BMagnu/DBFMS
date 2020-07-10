@@ -77,7 +77,8 @@ public class LocalDatabase {
 	public static SQLException executeTransaction(String... queries) {
 		try {
 			connection.setAutoCommit(false);
-//TODO actually commit
+			
+			boolean success = true;
 			SQLException sqlException = null;
 			
 			for (String query : queries) {
@@ -85,11 +86,17 @@ public class LocalDatabase {
 					Logger.logInfo(query);
 					stmt.executeUpdate(query);
 				} catch (SQLException e) {
+					success = false;
 					sqlException = e;
 					Logger.logError(e);
 					break;
 				}
 			}
+			
+			if(success)
+				connection.commit();
+			else
+				connection.rollback();
 
 			connection.setAutoCommit(true);
 			

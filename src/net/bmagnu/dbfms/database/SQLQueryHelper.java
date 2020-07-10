@@ -139,5 +139,11 @@ public class SQLQueryHelper {
 		
 		return query;
 	}
+	
+	public static String queryRating(Collection collection, float rating) {
+		String query = "SELECT fileID FROM " + collection.fileDB.globalName + " WHERE rating > " + rating;
+		
+		return query;
+	}
 
 }

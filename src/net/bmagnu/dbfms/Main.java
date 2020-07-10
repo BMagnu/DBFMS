@@ -55,9 +55,9 @@ public class Main {
 		types2.put("b", "2");
 		types2.put("c", "2");
 		
-		collection.emplaceFile("a", "", 0, types1);
-		collection.emplaceFile("b", "", 0, types1);
-		collection.emplaceFile("c", "", 0, types2);
+		collection.emplaceFile("a", "", 1, types1);
+		collection.emplaceFile("b", "", 2, types1);
+		collection.emplaceFile("c", "", 2.5f, types2);
 		
 		collection.connectTag("a", "1");
 		collection.connectTag("a", "2");
@@ -70,7 +70,7 @@ public class Main {
 		
 		collection.emplaceField("a", "f", "te");
 		collection.emplaceField("b", "f", "ttes");
-		collection.emplaceField("c", "f", "banane");
+		collection.emplaceField("c", "f", "banteane");
 		collection.emplaceField("c", "g", "obst");
 		
 		List<Pair<String, String>> types = new ArrayList<>();
@@ -89,7 +89,7 @@ public class Main {
 		
 		System.out.println();
 		
-		Map<Integer, String> test = collection.queryFiles("+f:nane +g:o");
+		Map<Integer, String> test = collection.queryFiles("+f:te rating>2.2");
 		for(Integer value : test.keySet())
 			System.out.println(value);
 		

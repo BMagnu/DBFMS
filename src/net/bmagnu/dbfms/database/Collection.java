@@ -49,7 +49,11 @@ public class Collection {
 			for(DB db : new DB[]{fileDB, tagDB, fileTagsDB, fieldDB, typeValuesDB, fileTypesDB}) 
 				db.create();
 			
-			executeSQL("CREATE INDEX C_" + name.toUpperCase(Locale.ENGLISH) + "_TAG_IDX ON " + tagDB.globalName + " (tagID, tagName)", true);
+			executeSQL("CREATE INDEX C_" + name.toUpperCase(Locale.ENGLISH) + "_TAG_IDX ON " + tagDB.globalName + " (tagName)", true);
+			executeSQL("CREATE INDEX C_" + name.toUpperCase(Locale.ENGLISH) + "_FIELD_IDX ON " + fieldDB.globalName + " (fieldName, fieldContent)", true);
+			executeSQL("CREATE INDEX C_" + name.toUpperCase(Locale.ENGLISH) + "_FILEPATH_IDX ON " + fileDB.globalName + " (filePath)", true);
+			executeSQL("CREATE INDEX C_" + name.toUpperCase(Locale.ENGLISH) + "_FILERATING_IDX ON " + fileDB.globalName + " (rating)", true);
+			executeSQL("CREATE INDEX C_" + name.toUpperCase(Locale.ENGLISH) + "_TYPEVALUES_IDX ON " + typeValuesDB.globalName + " (typeName, typeValue)", true);
 		}
 	}
 	
@@ -70,8 +74,21 @@ public class Collection {
 		List<Pair<String, String>> fields = new ArrayList<>();
 		List<Pair<String, String>> fieldsLike = new ArrayList<>();
 		
+		boolean useRating = false;
+		float rating = 0.0f;
+		
 		for(String part : query.split(" ")) {
-			if(part.contains(".")) { //TYPE
+			if (part.contains("rating>")) { //RATING
+				try {
+					float localRating = Float.parseFloat(part.split(">")[1]);
+					
+					useRating = true;
+					rating = rating < localRating ? localRating : rating;
+				} catch (NumberFormatException e) {
+					Logger.logWarning("Rating not a Number, ignoring");
+				}
+			}
+			else if(part.contains(".")) { //TYPE
 				switch(part.charAt(0)) {
 					case '-':
 						typesNot.add(new Pair<String, String>(part.split("\\.")[0].substring(1), part.split("\\.")[1]));
@@ -122,6 +139,8 @@ public class Collection {
 			queries.add(SQLQueryHelper.queryFields(this, fields));
 		if(!fieldsLike.isEmpty())
 			queries.add(SQLQueryHelper.queryLikeFields(this, fieldsLike));
+		if(useRating)
+			queries.add(SQLQueryHelper.queryRating(this, rating));
 		
 		StringBuilder finalQuery = new StringBuilder();
 		
