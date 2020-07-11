@@ -62,7 +62,7 @@ public class Collection {
 	 * @param query The Search Query. Tags: tag (required) ~tag (one of tags) -tag (not tag) Types: type.t (type must be t) -type.t (type can't be t) Fields: field:f (field must be f) +field:f (field must contain f)
 	 * @return Map of File ID + Thumbnail path
 	 */
-	public Map<Integer, String> queryFiles(String query){
+	public Map<Integer, Pair<String, String>> queryFiles(String query){
 		
 		List<String> tagsAnd = new ArrayList<>();
 		List<String> tagsOr = new ArrayList<>();
@@ -155,11 +155,11 @@ public class Collection {
 			
 		}
 		
-		Map<Integer, String> result = new HashMap<>();
-		List<Map<String, Object>>tables = LocalDatabase.executeSQL("SELECT fileID, fileThumb FROM " + fileDB.globalName + " WHERE fileID IN \r\n("+finalQuery +")", "fileID", "fileThumb");
+		Map<Integer, Pair<String, String>> result = new HashMap<>();
+		List<Map<String, Object>>tables = LocalDatabase.executeSQL("SELECT fileID, filePath, fileThumb FROM " + fileDB.globalName + " WHERE fileID IN \r\n("+finalQuery +")", "fileID", "filePath", "fileThumb");
 		
 		tables.stream().forEach((map) -> {
-			result.put((Integer)map.get("fileID"), (String)map.get("fileThumb"));
+			result.put((Integer)map.get("fileID"), new Pair<>((String)map.get("filePath"), (String)map.get("fileThumb")));
 		});
 		
 		return result;

@@ -1,7 +1,7 @@
 package net.bmagnu.dbfms.gui;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +16,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.layout.HBox;
+
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
 
@@ -29,7 +30,7 @@ public class GUIMainWindow {
 	@FXML
 	private TabPane collectionTabs;
 	
-	private List<GUIMainTab> tabs = new ArrayList<>();
+	private Map<String, GUIMainTab> tabs = new HashMap<>();
 	
 	public void init() {
 		collectionMenu.disableProperty().bind(Bindings.createBooleanBinding(() -> {
@@ -49,6 +50,10 @@ public class GUIMainWindow {
 			
 			addCollectionTab(collection);
 		}
+	}
+	
+	private Collection getCollection() {
+		return tabs.get(collectionTabs.getSelectionModel().getSelectedItem().getText()).collection;
 	}
 	
 	@FXML
@@ -85,9 +90,15 @@ public class GUIMainWindow {
 		Logger.logWarning("To Be Implemented");
     }
 	
+	private void addFile(String filePath) {
+		Dialog<DialogAddFileResult> dialog = DialogAddFile.getDialog(getCollection(), filePath);
+
+		dialog.showAndWait();
+	}
+	
 	@FXML
 	public void menuCollection_onAddFile(ActionEvent event) {
-        
+		addFile("test");
     }
 	
 	@FXML
@@ -114,7 +125,7 @@ public class GUIMainWindow {
 			return;
 		}
 		
-		tabs.add(tabController);
+		tabs.put(collection.name, tabController);
 	}
 	
 }
