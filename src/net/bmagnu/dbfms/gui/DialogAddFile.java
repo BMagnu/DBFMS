@@ -9,6 +9,7 @@ import java.util.Map;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
@@ -23,6 +24,7 @@ import javafx.scene.layout.VBox;
 
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
+import net.bmagnu.dbfms.util.Thumbnail;
 
 import static net.bmagnu.dbfms.database.LocalDatabase.executeSQL;
 
@@ -52,13 +54,16 @@ public class DialogAddFile {
 	@FXML
 	private TextField textFieldContent;
 	
+	@FXML
+	private TextField textRating;
+	
 	public List<String> tags = new ArrayList<>();
 	
 	public Map<String, String> fields = new HashMap<>();
 	
 	public Map<String, ComboBox<String>> types = new HashMap<>();
 	
-	public String thumbnailHash = null;
+	public String thumbnailHash = "";
 	
 	private List<String> typeList = new ArrayList<>();
 	
@@ -82,6 +87,7 @@ public class DialogAddFile {
 				typeField.getItems().add((String)typeValue.get("typeValue"));			
 			
 			HBox typeBox = new HBox(5, new Label(type + '.'), typeField);
+			typeBox.setAlignment(Pos.CENTER_LEFT);
 			
 			listTypes.getChildren().add(typeBox);
 			
@@ -90,9 +96,16 @@ public class DialogAddFile {
 		
 		List<Map<String, Object>> fileExists = executeSQL("SELECT fileID, fileThumb, rating FROM " + collection.fileDB.globalName + " WHERE filePath = '" + filePath + "'", "fileID", "fileThumb", "rating");
 
+		String thumbFile = "";
+		
 		if(!fileExists.isEmpty()) {
+			thumbnailHash = (String)fileExists.get(0).get("fileThumb");
+			thumbFile = "";
 			//TODO
 		}
+		
+		Thumbnail thumbnail = Thumbnail.getThumbnail(filePath, thumbFile);
+		thumbnailView.setImage(thumbnail.loadImage());
 		
 		//TODO Tag Recommendations
 	}

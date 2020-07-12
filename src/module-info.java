@@ -12,10 +12,15 @@ module dbfms {
 	
 	requires javafx.media;
 	
-	requires transitive javafx.graphics;
+	requires javafx.graphics;
 	
 	requires javafx.base;
+	
 	requires java.sql;
+	
+	requires org.bytedeco.javacv;
+	
+	requires org.bytedeco.ffmpeg;
 	
 	opens net.bmagnu.dbfms.gui to javafx.fxml, javafx.graphics;
 }

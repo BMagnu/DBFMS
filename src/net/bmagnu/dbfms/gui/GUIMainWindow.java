@@ -98,7 +98,7 @@ public class GUIMainWindow {
 	
 	@FXML
 	public void menuCollection_onAddFile(ActionEvent event) {
-		addFile("test");
+		addFile("G:\\E_Archiv\\Anime\\Vinland Saga\\[Erai-raws] Vinland Saga - 01 [1080p][Multiple Subtitle].mkv");
     }
 	
 	@FXML
