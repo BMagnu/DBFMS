@@ -10,7 +10,7 @@ public class DBField extends DB {
 	
 	@Override
 	protected String getFieldsAndTypes() {
-		return "fileID INT NOT NULL, fieldName VARCHAR(255) NOT NULL, fieldContent VARCHAR(255), PRIMARY KEY (fileID, fieldName), UNIQUE(fieldName, fieldContent)";
+		return "fileID INT NOT NULL, fieldName VARCHAR(255) NOT NULL, fieldContent VARCHAR(255), PRIMARY KEY (fileID, fieldName)";
 	}
 
 }

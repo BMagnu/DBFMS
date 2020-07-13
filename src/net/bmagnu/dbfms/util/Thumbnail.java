@@ -26,7 +26,7 @@ public abstract class Thumbnail {
 
 	public static Thumbnail getThumbnail(String filePath, String fileThumb) {
 		if(!fileThumb.isEmpty())
-			return new ThumbnailImage(fileThumb);
+			return new ThumbnailImage(LocalDatabase.thumbDBDir + fileThumb);
 		
 		String mime = "";
 		try {

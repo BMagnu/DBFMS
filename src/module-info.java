@@ -23,6 +23,7 @@ module dbfms {
 	requires org.bytedeco.javacv;
 	
 	requires org.bytedeco.ffmpeg;
+	requires org.apache.derby.commons;
 	
 	opens net.bmagnu.dbfms.gui to javafx.fxml, javafx.graphics;
 }

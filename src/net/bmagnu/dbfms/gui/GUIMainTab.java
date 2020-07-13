@@ -86,8 +86,7 @@ public class GUIMainTab {
         	fileThumb.setOnMouseClicked((mouseEvent) -> {
         		if(mouseEvent.getButton() == MouseButton.PRIMARY) {
         			try {
-        				//TODO Correct Opening
-						Desktop.getDesktop().edit(new File(file.getValue().getKey()));
+						Desktop.getDesktop().open(new File(file.getValue().getKey()));
 					} catch (IOException e) {
 						Logger.logError(e);
 					}

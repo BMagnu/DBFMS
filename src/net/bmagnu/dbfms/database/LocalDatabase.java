@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
+
 import net.bmagnu.dbfms.util.Logger;
 
 public class LocalDatabase {
@@ -81,7 +83,11 @@ public class LocalDatabase {
 				results.add(currentRow);
 			}
 		} catch (SQLException e) {
-			Logger.logError(e);
+			if (e instanceof DerbySQLIntegrityConstraintViolationException)
+				Logger.logInfo("Constraint Violation: " + ((DerbySQLIntegrityConstraintViolationException) e).getTableName());
+			else
+				Logger.logError(e);
+				
 		}
 
 		return results;
