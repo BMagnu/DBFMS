@@ -18,6 +18,8 @@ module dbfms {
 	
 	requires java.sql;
 	
+	requires java.desktop;
+
 	requires org.bytedeco.javacv;
 	
 	requires org.bytedeco.ffmpeg;

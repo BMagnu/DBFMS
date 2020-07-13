@@ -19,7 +19,7 @@
                   <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                         <Label text="Rating:" />
-                        <TextField fx:id="textRating" prefHeight="25.0" prefWidth="50.0" />
+                        <TextField text="0" fx:id="textRating" prefHeight="25.0" prefWidth="50.0" />
                      </children>
                   </HBox>
                </children>

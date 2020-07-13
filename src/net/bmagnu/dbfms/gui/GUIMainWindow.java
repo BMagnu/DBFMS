@@ -1,11 +1,15 @@
 package net.bmagnu.dbfms.gui;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,8 +19,9 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.DragEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-
+import javafx.stage.FileChooser;
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
 
@@ -50,6 +55,13 @@ public class GUIMainWindow {
 			
 			addCollectionTab(collection);
 		}
+		
+		collectionTabs.setOnDragOver((event) -> {
+			if (event.getGestureSource() != collectionTabs && event.getDragboard().hasFiles()) {
+				event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+			}
+			event.consume();
+        });
 	}
 	
 	private Collection getCollection() {
@@ -98,12 +110,25 @@ public class GUIMainWindow {
 	
 	@FXML
 	public void menuCollection_onAddFile(ActionEvent event) {
-		addFile("G:\\E_Archiv\\Anime\\Vinland Saga\\[Erai-raws] Vinland Saga - 01 [1080p][Multiple Subtitle].mkv");
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(collectionTabs.getScene().getWindow());
+		
+		addFile(selectedFile.getAbsolutePath());
     }
 	
 	@FXML
 	public void tab_droppedFile(DragEvent event) {
+		List<String> files = event.getDragboard().getFiles().stream().map(File::getAbsolutePath).collect(Collectors.toList());
+		
+		event.setDropCompleted(true);
+
+        event.consume();
         
+        Platform.runLater(() -> {
+        	for(String file : files)
+				addFile(file);
+        });
+
     }
 	
 	private void addCollectionTab(Collection collection) {

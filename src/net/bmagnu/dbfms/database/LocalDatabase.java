@@ -1,5 +1,6 @@
 package net.bmagnu.dbfms.database;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,18 +16,25 @@ import net.bmagnu.dbfms.util.Logger;
 public class LocalDatabase {
 
 	private static final String connectionUrl;
-	public static final String programDataDir;
+	private static final String programDataDir;
+
+	public static final String thumbDBDir;
 
 	private static final Connection connection;
 
 	static {
+		char systemDelim;
+
 		if ((System.getProperty("os.name")).toUpperCase().contains("WIN")) {
 			programDataDir = System.getenv("AppData") + "\\" + "DBFSM\\";
+			systemDelim = '\\';
 		} else {
 			programDataDir = System.getProperty("user.home") + "/" + ".dbfsm/";
+			systemDelim = '/';
 		}
 
 		connectionUrl = "jdbc:derby:" + programDataDir + "db" + ";create=true";
+		thumbDBDir = programDataDir + "thumbCache" + systemDelim;
 
 		Connection localdb = null;
 
@@ -38,6 +46,11 @@ public class LocalDatabase {
 		}
 
 		connection = localdb;
+		
+		File directory = new File(thumbDBDir);
+		if (!directory.exists()) {
+			directory.mkdir();
+		}
 	}
 
 	public static List<Map<String, Object>> executeSQL(String query, String... columns) {
@@ -50,12 +63,12 @@ public class LocalDatabase {
 		try (Statement stmt = connection.createStatement()) {
 
 			Logger.logInfo(query);
-			
+
 			if (update) {
 				stmt.executeUpdate(query);
 				return null;
 			}
-		
+
 			ResultSet rs = stmt.executeQuery(query);
 
 			while (rs.next()) {
@@ -77,10 +90,10 @@ public class LocalDatabase {
 	public static SQLException executeTransaction(String... queries) {
 		try {
 			connection.setAutoCommit(false);
-			
+
 			boolean success = true;
 			SQLException sqlException = null;
-			
+
 			for (String query : queries) {
 				try (Statement stmt = connection.createStatement()) {
 					Logger.logInfo(query);
@@ -92,18 +105,18 @@ public class LocalDatabase {
 					break;
 				}
 			}
-			
-			if(success)
+
+			if (success)
 				connection.commit();
 			else
 				connection.rollback();
 
 			connection.setAutoCommit(true);
-			
+
 			return sqlException;
 		} catch (SQLException e) {
 			Logger.logError(e);
-			
+
 			return e;
 		}
 	}
