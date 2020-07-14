@@ -45,7 +45,7 @@
                         <VBox fx:id="listTags" />
                      </content>
                   </ScrollPane>
-                  <TextField fx:id="textTag" />
+                  <TextField fx:id="textTag" onAction="#addTag"/>
                   <Button mnemonicParsing="false" onAction="#addTag" prefWidth="105.0" text="Add Tag" />
                </children>
             </VBox>
@@ -59,8 +59,8 @@
                   </ScrollPane>
                   <HBox>
                      <children>
-                        <TextField fx:id="textFieldName" prefHeight="25.0" prefWidth="100.0" />
-                        <TextField fx:id="textFieldContent" HBox.hgrow="ALWAYS" />
+                        <TextField fx:id="textFieldName" prefHeight="25.0" prefWidth="100.0" onAction="#addField" />
+                        <TextField fx:id="textFieldContent" HBox.hgrow="ALWAYS" onAction="#addField" />
                      </children>
                   </HBox>
                   <Button mnemonicParsing="false" onAction="#addField" prefWidth="105.0" text="Add Field" />

@@ -19,6 +19,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.HBox;
@@ -88,6 +89,11 @@ public class DialogAddFile {
 			typeField.getEditor().textProperty().addListener((obs, oldText, newText) -> {
 				typeField.setValue(newText);
 			});
+			typeField.setOnKeyPressed((event) -> {
+			    if (event.getCode() == KeyCode.ENTER) { 
+			        event.consume();
+			    }
+			});
 
 			List<Map<String, Object>> typeValues = executeSQL(
 					"SELECT typeValue FROM " + collection.typeValuesDB.globalName + " WHERE typeName = '" + type + "'",
@@ -125,6 +131,8 @@ public class DialogAddFile {
 
 	@FXML
 	public void addTag(ActionEvent e) {
+		e.consume();
+		
 		String tagName = textTag.getText();
 		if (tags.contains(tagName))
 			return;
@@ -144,11 +152,13 @@ public class DialogAddFile {
 
 		listTags.getChildren().add(newTagLabel);
 		
-		//TODO Catch Enter and Clear Field
+		textTag.setText("");
 	}
 
 	@FXML
 	public void addField(ActionEvent e) {
+		e.consume();
+		
 		String fieldName = textFieldName.getText();
 		if (fields.get(fieldName) != null)
 			return;
@@ -168,6 +178,8 @@ public class DialogAddFile {
 
 		listFields.getChildren().add(newFieldLabel);
 
+		textFieldName.setText("");
+		textFieldContent.setText("");
 	}
 
 	@FXML
