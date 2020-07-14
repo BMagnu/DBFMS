@@ -9,6 +9,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException;
@@ -21,13 +22,14 @@ public class LocalDatabase {
 	private static final String programDataDir;
 
 	public static final String thumbDBDir;
-
+	public static final char systemDelim;
+	
 	private static final Connection connection;
 
 	static {
-		char systemDelim;
+		
 
-		if ((System.getProperty("os.name")).toUpperCase().contains("WIN")) {
+		if ((System.getProperty("os.name")).toUpperCase(Locale.ENGLISH).contains("WIN")) {
 			programDataDir = System.getenv("AppData") + "\\" + "DBFSM\\";
 			systemDelim = '\\';
 		} else {

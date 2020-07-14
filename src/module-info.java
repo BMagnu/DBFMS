@@ -16,6 +16,8 @@ module dbfms {
 	
 	requires javafx.base;
 	
+	requires javafx.swing;
+	
 	requires java.sql;
 	
 	requires java.desktop;

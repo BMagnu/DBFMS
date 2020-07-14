@@ -120,7 +120,7 @@ public class DialogAddFile {
 			thumbnailHash = (String) fileExists.get(0).get("fileThumb");
 			thumbFile = LocalDatabase.thumbDBDir + thumbnailHash;
 
-			// TODO
+			// TODO Load existing File Data
 		}
 
 		Thumbnail thumbnail = Thumbnail.getThumbnail(filePath, thumbFile);
@@ -194,7 +194,7 @@ public class DialogAddFile {
 
 	@FXML
 	public void manageTypes(ActionEvent e) {
-		// TODO
+		// TODO Implement Type Management
 		Logger.logWarning("Not Implemented");
 	}
 

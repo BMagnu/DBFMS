@@ -95,7 +95,7 @@ public class GUIMainTab {
 					}
         		}
         		else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-        			//TODO Edit
+        			//TODO Open entry editing
         		}
         	});
         	

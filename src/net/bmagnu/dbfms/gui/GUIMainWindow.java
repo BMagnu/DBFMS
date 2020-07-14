@@ -92,13 +92,13 @@ public class GUIMainWindow {
 	
 	@FXML
 	public void menuDB_onBackup(ActionEvent event) {
-        //TODO
+        //TODO Implement DB Backup
 		Logger.logWarning("To Be Implemented");
     }
 	
 	@FXML
 	public void menuCollection_onManageTags(ActionEvent event) {
-		//TODO
+		//TODO Implement Tag Management
 		Logger.logWarning("To Be Implemented");
     }
 	
