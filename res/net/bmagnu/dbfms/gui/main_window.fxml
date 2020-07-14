@@ -24,7 +24,8 @@
             <Menu fx:id="collectionMenu" disable="true" mnemonicParsing="false" text="Collection">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onManageTags" text="Manage Tags" />
-                  <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddFile" text="Add File" />
+                <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddFile" text="Add File" />
+                <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddDir" text="Add Directory" />
               </items>
             </Menu>
         </menus>

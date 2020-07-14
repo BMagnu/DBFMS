@@ -35,6 +35,10 @@ public abstract class Thumbnail {
 			Logger.logError(e);
 		}
 		
+		if(mime == null)
+			return new ThumbnailNull();
+		//TODO Directory
+		
 		if(!mime.isEmpty() && mime.split("/")[0].equals("image"))
 			return new ThumbnailImage(filePath);
 		

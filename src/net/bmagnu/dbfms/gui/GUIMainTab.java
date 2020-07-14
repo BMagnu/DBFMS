@@ -47,13 +47,16 @@ public class GUIMainTab {
 	            double width = fileScrollPane.getContent().getBoundsInLocal().getWidth();
 	            double vvalue = fileScrollPane.getVvalue();
 	            fileScrollPane.setVvalue(vvalue + -deltaY / width);
-	        
 	    });
 	}
 	
 	@FXML
 	public void search_onSearch(ActionEvent event) {
+		long time1 = System.nanoTime(), time2, time3;
+		
         files = collection.queryFiles(searchQueryField.getText());
+        
+        time2 = System.nanoTime();
         
         filePane.getChildren().clear();
         
@@ -83,7 +86,7 @@ public class GUIMainTab {
         	filePaneLocal.setMinHeight(300);
         	filePaneLocal.setMinWidth(300);
         	
-        	fileThumb.setOnMouseClicked((mouseEvent) -> {
+        	filePaneLocal.setOnMouseClicked((mouseEvent) -> {
         		if(mouseEvent.getButton() == MouseButton.PRIMARY) {
         			try {
 						Desktop.getDesktop().open(new File(file.getValue().getKey()));
@@ -96,8 +99,14 @@ public class GUIMainTab {
         		}
         	});
         	
+        	filePaneLocal.setStyle("-fx-border-color: black");
+        	
         	filePane.getChildren().add(filePaneLocal);
         }
+        
+        time3 = System.nanoTime();
+        
+        Logger.logInfo("Query Time: " + ((time2 - time1) / 1000000) + "ms, Display Time: " + ((time3 - time2) / 1000000) + "ms");
     }
 	
 }

@@ -2,7 +2,6 @@ package net.bmagnu.dbfms.gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
@@ -112,6 +112,20 @@ public class GUIMainWindow {
 	public void menuCollection_onAddFile(ActionEvent event) {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(collectionTabs.getScene().getWindow());
+		
+		if(selectedFile == null)
+			return;
+		
+		addFile(selectedFile.getAbsolutePath());
+    }
+	
+	@FXML
+	public void menuCollection_onAddDir(ActionEvent event) {
+		DirectoryChooser fileChooser = new DirectoryChooser();
+		File selectedFile = fileChooser.showDialog(collectionTabs.getScene().getWindow());
+		
+		if(selectedFile == null)
+			return;
 		
 		addFile(selectedFile.getAbsolutePath());
     }
