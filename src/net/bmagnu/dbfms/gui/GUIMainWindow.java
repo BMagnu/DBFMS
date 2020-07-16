@@ -22,6 +22,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
 
@@ -92,7 +93,7 @@ public class GUIMainWindow {
 	
 	@FXML
 	public void menuDB_onBackup(ActionEvent event) {
-        //TODO Implement DB Backup
+        //FIXME Implement DB Backup
 		Logger.logWarning("To Be Implemented");
     }
 	

@@ -4,19 +4,29 @@ import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.database.LocalDatabase;
 import net.bmagnu.dbfms.database.SQLQueryHelper;
 import net.bmagnu.dbfms.gui.DBFMS;
+import net.bmagnu.dbfms.util.Logger;
 
-import static  javafx.application.Application.launch;
-
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javafx.util.Pair;
 
+import static  javafx.application.Application.launch;
+
 public class Main {
-	public static void main(String[] args) {
+	
+	final static public Properties properties = new Properties();
+
+	public static void main(String[] args) throws IOException {
+		properties.load(Main.class.getResourceAsStream("dbfms.properties"));
+		
+		Logger.logInfo("Version: " + properties.getProperty("version"));
+		
 		launch(DBFMS.class, args);
 		
 		/*List<Map<String, Object>> tables = LocalDatabase.executeSQL("SELECT * FROM sys.systables", "TABLENAME");

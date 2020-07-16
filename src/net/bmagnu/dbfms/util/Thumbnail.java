@@ -100,7 +100,7 @@ public abstract class Thumbnail {
 	}
 	
 	public static Pair<String, Thumbnail> emplaceThumbnailInCache(Thumbnail thumb) {
-		//TODO Implement rendering 300x300 Thumb and emplace in cache
+		//FIXME Implement rendering 300x300 Thumb and emplace in cache
 		return null;
 	}
 	
@@ -161,13 +161,41 @@ class ThumbnailVideo extends Thumbnail{
 
 class ThumbnailFileThumbs extends Thumbnail {
 	
+	private final String path;
+	
+	private static final Font font = new Font("Arial", Font.PLAIN, 20);
+	
+	private static BufferedImage icon; 
+	
+	static {
+		try {
+			icon = ImageIO.read(ThumbnailDirectory.class.getResource("icon_file.png"));
+		} catch (IOException e) {
+			icon = null;
+		}
+	}
+	
 	public ThumbnailFileThumbs(String path) {
+		String[] split = path.split("/|\\\\");
+		this.path = split[split.length - 1];
 	}
 	
 	@Override
 	public Image loadImage() {
-		//TODO Implement Generic Thumbs
-		return null;
+		
+		BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g = (Graphics2D)image.getGraphics();
+	
+		g.setColor(Color.BLACK);
+		FontMetrics metrics = g.getFontMetrics(font);
+	    int x = 150 - (metrics.stringWidth(path) / 2);
+	    int y = 250 - (metrics.getHeight() / 2) + metrics.getAscent();
+	    g.setFont(font);
+	    g.drawString(path, x, y);
+	    g.drawImage(icon, 150 - icon.getWidth()/2, 150 - icon.getHeight()/2, null);
+		
+		return SwingFXUtils.toFXImage(image, null);
 	}
 }
 

@@ -6,7 +6,7 @@ import javafx.util.Pair;
 
 public class SQLQueryHelper {
 
-	private static String buildSQLTagList(String... items) {
+	public static String buildSQLTagList(String... items) {
 		StringBuilder builder = new StringBuilder();
 		
 		for(int i = 0; i < items.length; i++) {
@@ -21,7 +21,7 @@ public class SQLQueryHelper {
 		return builder.toString();
 	}
 	
-	private static String buildSQLTypeList(List<Pair<String, String>> types) {
+	public static String buildSQLTypeList(List<Pair<String, String>> types) {
 		StringBuilder findTypeIDs = new StringBuilder();
 		
 		for(int i = 0; i < types.size(); i++) {

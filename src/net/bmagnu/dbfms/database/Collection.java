@@ -18,7 +18,6 @@ import net.bmagnu.dbfms.util.Logger;
 import net.bmagnu.dbfms.util.Thumbnail;
 
 import static net.bmagnu.dbfms.database.LocalDatabase.executeSQL;
-import static net.bmagnu.dbfms.database.LocalDatabase.executeTransaction;
 
 public class Collection {
 
@@ -199,7 +198,8 @@ public class Collection {
 					 		 " WHERE " + fileDB.globalName + ".filePath = '" + filePath + "'";
 		}
 		
-		executeTransaction(queries);
+		for(String query : queries)
+			executeSQL(query, true);
 	}
 
 	public void emplaceTag(String tag, String descriptionUrl) {

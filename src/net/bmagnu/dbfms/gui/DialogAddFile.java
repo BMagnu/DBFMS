@@ -27,7 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import net.bmagnu.dbfms.database.Collection;
-import net.bmagnu.dbfms.database.LocalDatabase;
+import net.bmagnu.dbfms.database.SQLQueryHelper;
 import net.bmagnu.dbfms.util.Logger;
 import net.bmagnu.dbfms.util.Thumbnail;
 
@@ -116,11 +116,34 @@ public class DialogAddFile {
 		String thumbFile = "";
 
 		if (!fileExists.isEmpty()) {
+			//File exists, Pull from DB
 			this.fileExists = true;
-			thumbnailHash = (String) fileExists.get(0).get("fileThumb");
-			thumbFile = LocalDatabase.thumbDBDir + thumbnailHash;
+			thumbFile = thumbnailHash = (String) fileExists.get(0).get("fileThumb");
 
-			// TODO Load existing File Data
+			textRating.setText(((Float)fileExists.get(0).get("rating")).toString());
+			
+			int fileID = ((Integer) fileExists.get(0).get("fileID"));
+			
+			List<Map<String, Object>> fileTags = executeSQL("SELECT " + collection.tagDB.globalName + ".tagName FROM "
+					+ collection.tagDB.globalName + " NATURAL JOIN " + collection.fileTagsDB.globalName + " WHERE "
+					+ collection.fileTagsDB.globalName + ".fileID = " + fileID, "tagName");
+			
+			for(Map<String, Object> tag : fileTags)
+				addTagByName((String)tag.get("tagName"));
+			
+			List<Map<String, Object>> fileFields = executeSQL("SELECT fieldName, fieldContent FROM "
+					+ collection.fieldDB.globalName + " WHERE fileID = " + fileID, "fieldName", "fieldContent");
+			
+			for(Map<String, Object> field : fileFields)
+				addFieldByName((String)field.get("fieldName"), (String)field.get("fieldContent"));
+			
+			List<Map<String, Object>> fileTypes = executeSQL("SELECT " + collection.typeValuesDB.globalName + ".typeName, "
+					+ collection.typeValuesDB.globalName + ".typeValue FROM "
+					+ collection.typeValuesDB.globalName + " NATURAL JOIN " + collection.fileTypesDB.globalName + " WHERE "
+					+ collection.fileTypesDB.globalName + ".fileID = " + fileID, "typeName", "typeValue");
+			
+			for(Map<String, Object> type : fileTypes)
+				types.get((String)type.get("typeName")).setValue((String)type.get("typeValue"));
 		}
 
 		Thumbnail thumbnail = Thumbnail.getThumbnail(filePath, thumbFile);
@@ -133,7 +156,10 @@ public class DialogAddFile {
 	public void addTag(ActionEvent e) {
 		e.consume();
 		
-		String tagName = textTag.getText();
+		addTagByName(textTag.getText());
+	}
+
+	private void addTagByName(String tagName) {
 		if (tags.contains(tagName))
 			return;
 
@@ -145,7 +171,7 @@ public class DialogAddFile {
 			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
 				if (mouseEvent.getClickCount() == 2) {
 					listTags.getChildren().remove(newTagLabel);
-					types.remove(tagName);
+					tags.remove(tagName);
 				}
 			}
 		});
@@ -154,7 +180,7 @@ public class DialogAddFile {
 		
 		textTag.setText("");
 	}
-
+	
 	@FXML
 	public void addField(ActionEvent e) {
 		e.consume();
@@ -163,9 +189,13 @@ public class DialogAddFile {
 		if (fields.get(fieldName) != null)
 			return;
 
-		fields.put(fieldName, textFieldContent.getText());
+		addFieldByName(fieldName, textFieldContent.getText());
+	}
+	
+	private void addFieldByName(String fieldName, String content) {
+		fields.put(fieldName, content);
 
-		Label newFieldLabel = new Label(fieldName + ':' + textFieldContent.getText());
+		Label newFieldLabel = new Label(fieldName + ':' + content);
 
 		newFieldLabel.setOnMouseClicked((mouseEvent) -> {
 			if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
@@ -187,6 +217,9 @@ public class DialogAddFile {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(thumbnailView.getScene().getWindow());
 
+		if(selectedFile == null)
+			return;
+		
 		Pair<String, Thumbnail> thumb = Thumbnail.emplaceThumbnailInCache(selectedFile.getAbsolutePath());
 		thumbnailHash = thumb.getKey();
 		thumbnailView.setImage(thumb.getValue().loadImage());
@@ -230,25 +263,72 @@ public class DialogAddFile {
 
 					if (buttonOK) {
 						Map<String, String> typeList = new HashMap<>();
+						List<Pair<String, String>> typeList2 = new ArrayList<>();
+						
+						//FIXME Cache Thumb if hash empty & CheckBox -> Merge
 						
 						//TODO This throws a loooot of exceptions. Make methods check for existance?
 						for (Entry<String, ComboBox<String>> types : controller.types.entrySet()) {
 							collection.emplaceTypeValue(types.getKey(), types.getValue().getValue());
 							typeList.put(types.getKey(), types.getValue().getValue());
+							typeList2.add(new Pair<>(types.getKey(), types.getValue().getValue()));
 						}
 						
+						String typeString = SQLQueryHelper.buildSQLTypeList(typeList2);
+						
 						collection.emplaceFile(controller.labelFilename.getText(), controller.thumbnailHash, Float.parseFloat(controller.textRating.getText()), typeList);
+
+						int fileID = (Integer)executeSQL("SELECT fileID FROM "
+								+ collection.fileDB.globalName + " WHERE filePath = '" + filePath + "'", "fileID").get(0).get("fileID");	
+						
+						if(controller.fileExists)
+							executeSQL("UPDATE " + collection.fileDB.globalName + " SET rating = "+ Float.parseFloat(controller.textRating.getText()) + ", fileThumb = '" + controller.thumbnailHash + "' WHERE fileID = " + fileID, true);
+			
+						
+						if(!typeString.isEmpty())
+							executeSQL("DELETE FROM " + collection.fileTypesDB.globalName + " WHERE fileID = " + fileID
+									+ " AND typeValueID NOT IN (SELECT typeValueID FROM " + collection.typeValuesDB.globalName + " WHERE " + typeString + ")", true);
+						
+						String tags = "";
 						
 						for (String tag : controller.tags) {
 							collection.emplaceTag(tag, "");
-							collection.connectTag(controller.labelFilename.getText(), tag);
+							collection.connectTag(filePath, tag);
+							
+							tags += '\'' + tag + "', ";
 						}
-
+						if(!tags.isEmpty())
+							tags = tags.substring(0, tags.length() - 2);
+						
+						StringBuilder findFields = new StringBuilder();
+						
+						{
+							int i = 0;
+							for(Entry<String, String> field : controller.fields.entrySet()) {
+							
+								if(i != 0) 
+									findFields.append(" OR ");
+							
+								findFields.append("fieldName = '");
+								findFields.append(field.getKey());
+								findFields.append("' AND fieldContent = '");
+								findFields.append(field.getValue());
+								findFields.append('\'');
+							
+								i++;
+							}
+						}
+						
+						if(findFields.length() != 0)
+							executeSQL("DELETE FROM " + collection.fieldDB.globalName + " WHERE fileID = " + fileID
+									+ " AND NOT (" + findFields.toString() + ")", true);
+						
 						for (Entry<String, String> field : controller.fields.entrySet()) {
 							collection.emplaceField(controller.labelFilename.getText(), field.getKey(), field.getValue());
-						}
-
-						//TODO Allow Updating
+						}		
+						
+						executeSQL("DELETE FROM " + collection.fileTagsDB.globalName + " WHERE fileID = " + fileID
+								+ " AND tagID NOT IN (SELECT tagID FROM " + collection.tagDB.globalName + " WHERE tagName IN (" + tags + "))", true);
 					}
 
 					return data;

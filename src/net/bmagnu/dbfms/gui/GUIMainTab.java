@@ -11,6 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
@@ -95,7 +96,9 @@ public class GUIMainTab {
 					}
         		}
         		else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-        			//TODO Open entry editing
+        			Dialog<DialogAddFileResult> dialog = DialogAddFile.getDialog(collection, file.getValue().getKey());
+
+        			dialog.showAndWait();
         		}
         	});
         	
