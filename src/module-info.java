@@ -28,5 +28,7 @@ module dbfms {
 	
 	requires org.apache.derby.commons;
 	
+	requires org.apache.derby.engine;
+	
 	opens net.bmagnu.dbfms.gui to javafx.fxml, javafx.graphics;
 }
