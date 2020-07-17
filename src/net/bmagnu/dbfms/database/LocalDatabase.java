@@ -1,6 +1,7 @@
 package net.bmagnu.dbfms.database;
 
 import java.io.File;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -126,6 +127,19 @@ public class LocalDatabase {
 			Logger.logError(e);
 
 			return e;
+		}
+	}
+	
+	public static void callSQL(String call, String... args) {
+		try(CallableStatement cs = connection.prepareCall(call)) {
+			
+			for(int i = 0; i < args.length; i++) {
+				cs.setString(i + 1, args[i]);
+			}
+			
+			cs.execute(); 
+		} catch (SQLException e) {
+			Logger.logError(e);
 		}
 	}
 

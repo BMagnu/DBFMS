@@ -1,12 +1,20 @@
 package net.bmagnu.dbfms.gui;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -22,8 +30,9 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-
+import net.bmagnu.dbfms.Main;
 import net.bmagnu.dbfms.database.Collection;
+import net.bmagnu.dbfms.database.LocalDatabase;
 import net.bmagnu.dbfms.util.Logger;
 
 import static net.bmagnu.dbfms.database.LocalDatabase.executeSQL;
@@ -93,8 +102,72 @@ public class GUIMainWindow {
 	
 	@FXML
 	public void menuDB_onBackup(ActionEvent event) {
-        //FIXME Implement DB Backup
-		Logger.logWarning("To Be Implemented");
+		FileChooser fileChooser = new FileChooser();
+		
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("ZIP file (*.zip)", "*.zip");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+		File selectedFile = fileChooser.showSaveDialog(collectionTabs.getScene().getWindow());
+		
+		if(selectedFile == null)
+			return;
+		
+		Path backupDB = Paths.get(LocalDatabase.programDataDir + "backup");
+		
+		try {
+			if(Files.exists(backupDB))
+				Files.walk(backupDB)
+					.sorted(Comparator.reverseOrder())
+					.map(Path::toFile)
+					.forEach(File::delete);
+		} catch (IOException e) {
+			Logger.logError(e);
+			return;
+		}
+
+		LocalDatabase.callSQL("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE(?)", backupDB.toAbsolutePath().toString().replace('\\', '/'));
+		
+		try {
+			Files.write(backupDB.resolve("version.txt"), Main.properties.getProperty("version").getBytes());
+		} catch (IOException e) {
+			Logger.logError(e);
+		}
+		
+		try {
+			FileOutputStream fos = new FileOutputStream(selectedFile);
+	        ZipOutputStream zipOut = new ZipOutputStream(fos);
+			
+	        int depth = backupDB.getNameCount();
+	        
+			Files.walk(backupDB)
+				.forEach((file) -> {
+					try {
+						if (file.toFile().isDirectory() && file.compareTo(backupDB) != 0) {
+							zipOut.putNextEntry(new ZipEntry(file.subpath(depth,file.getNameCount()).toString().replace('\\', '/') + '/'));
+							zipOut.closeEntry();
+						}
+						else if (!file.toFile().isDirectory()) {
+							FileInputStream fis = new FileInputStream(file.toFile());
+					        ZipEntry zipEntry = new ZipEntry(file.subpath(depth,file.getNameCount()).toString().replace('\\', '/'));
+					        zipOut.putNextEntry(zipEntry);
+					        byte[] bytes = new byte[1024];
+					        int length;
+					        while ((length = fis.read(bytes)) >= 0) {
+					            zipOut.write(bytes, 0, length);
+					        }
+					        fis.close();
+						}
+					} catch (IOException e) {
+						Logger.logError(e);
+					}
+				});
+			
+			zipOut.close();
+			fos.close();
+		} catch (IOException e) {
+			Logger.logError(e);
+		}
+		
     }
 	
 	@FXML
