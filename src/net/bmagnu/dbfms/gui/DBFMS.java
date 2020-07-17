@@ -4,18 +4,18 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class DBFMS extends Application {
 
 	GUIMainWindow mainGui;
 	
+	public static final Image icon = new Image(DBFMS.class.getResourceAsStream("icon.png"));
+	
 	@Override
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("main_window.fxml"));
-		
-		//FIXME Add Icon
-		//Image icon = new Image(getClass().getResourceAsStream("icon.png"));
 
 		Parent root = loader.load();
 	    
@@ -24,7 +24,7 @@ public class DBFMS extends Application {
         stage.setMinWidth(1000);
         stage.setMinHeight(1000.0f * 9.0f / 16.0f);
         stage.setTitle("DBFMS");
-        //stage.getIcons().add(icon);
+        stage.getIcons().add(icon);
         stage.setScene(scene);
         stage.show();
         

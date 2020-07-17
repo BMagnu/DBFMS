@@ -27,6 +27,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.database.SQLQueryHelper;
@@ -79,7 +80,7 @@ public class DialogAddFile {
 
 	public boolean fileExists = false;
 
-	public void init(Collection collection, String filePath) {
+	public void init(Collection collection, String filePath) {		
 		labelFilename.setText(filePath);
 
 		List<Map<String, Object>> typesSQL = executeSQL(
@@ -270,6 +271,7 @@ public class DialogAddFile {
 
 				final DialogPane dialogPane = getDialogPane();
 				dialogPane.setContent(content);
+				((Stage) dialogPane.getScene().getWindow()).getIcons().add(DBFMS.icon);
 
 				dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
 

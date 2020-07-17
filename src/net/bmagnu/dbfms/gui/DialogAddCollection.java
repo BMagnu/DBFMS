@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
 
@@ -82,6 +83,7 @@ public class DialogAddCollection {
 				}
 				
 				final DialogPane dialogPane = getDialogPane();
+				((Stage) dialogPane.getScene().getWindow()).getIcons().add(DBFMS.icon);
 				dialogPane.setContent(content);
 				
 				dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
