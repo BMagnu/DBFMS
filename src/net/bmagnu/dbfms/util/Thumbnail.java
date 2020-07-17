@@ -54,7 +54,7 @@ public abstract class Thumbnail {
 			return new ThumbnailImage(filePath);
 		
 		if(!mime.isEmpty() && mime.split("/")[0].equals("video"))
-			return new ThumbnailVideo(filePath);
+			return new ThumbnailVideo(new File(filePath));
 		
 		return new ThumbnailFileThumbs(filePath);
 	}
@@ -179,7 +179,7 @@ class ThumbnailVideo extends Thumbnail{
 		avutil.av_log_set_level(avutil.AV_LOG_QUIET);
 	}
 	
-	public ThumbnailVideo(String path) {
+	public ThumbnailVideo(File path) {
 		g = new FFmpegFrameGrabber(path);
 	}
 	
