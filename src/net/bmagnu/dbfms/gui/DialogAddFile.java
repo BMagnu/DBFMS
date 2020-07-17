@@ -92,7 +92,7 @@ public class DialogAddFile {
 			typeField.setEditable(true);
 
 			typeField.getEditor().textProperty().addListener((obs, oldText, newText) -> {
-				typeField.setValue(newText);
+				typeField.setValue(Collection.sanitize(newText));
 			});
 			typeField.setOnKeyPressed((event) -> {
 			    if (event.getCode() == KeyCode.ENTER) { 
@@ -172,8 +172,8 @@ public class DialogAddFile {
 	@FXML
 	public void addTag(ActionEvent e) {
 		e.consume();
-		//TODO Remove Spaces
-		addTagByName(textTag.getText());
+		
+		addTagByName(Collection.sanitize(textTag.getText()));
 	}
 
 	private void addTagByName(String tagName) {
@@ -202,11 +202,11 @@ public class DialogAddFile {
 	public void addField(ActionEvent e) {
 		e.consume();
 		
-		String fieldName = textFieldName.getText();
+		String fieldName = Collection.sanitize(textFieldName.getText());
 		if (fields.get(fieldName) != null)
 			return;
 
-		addFieldByName(fieldName, textFieldContent.getText());
+		addFieldByName(fieldName, Collection.sanitize(textFieldContent.getText()));
 	}
 	
 	private void addFieldByName(String fieldName, String content) {

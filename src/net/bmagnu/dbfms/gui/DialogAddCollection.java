@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.VBox;
-
+import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.util.Logger;
 
 public class DialogAddCollection {
@@ -33,9 +33,14 @@ public class DialogAddCollection {
 	
 	@FXML
 	public void addType(ActionEvent e) {
-		//FIXME UX Improvements
+		addTypeByName();
+	}
+	
+	private void addTypeByName() {
+		String typeName = Collection.sanitize(typeField.getText());
 		
-		String typeName = typeField.getText();
+		typeField.setText("");
+		
 		if(types.contains(typeName))
 			return;
 		
@@ -80,6 +85,11 @@ public class DialogAddCollection {
 				dialogPane.setContent(content);
 				
 				dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+				
+				controller.typeField.setOnAction((event) -> {
+					controller.addTypeByName();
+					event.consume();
+				});
 			
 				setResultConverter((dialogButton) -> {
 					DialogAddCollectionResult data = new DialogAddCollectionResult();

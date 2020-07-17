@@ -236,4 +236,8 @@ public class Collection {
 			
 		}, () -> { Logger.logError("Specified Filepath not in Database"); });
 	}
+	
+	public static String sanitize(String raw) {
+		return raw.replace(' ', '_').replace('.', '_').replace(':', '_').replace('>', '_');
+	}
 }

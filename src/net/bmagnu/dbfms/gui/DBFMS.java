@@ -14,7 +14,7 @@ public class DBFMS extends Application {
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("main_window.fxml"));
 		
-		//TODO Add Icon
+		//FIXME Add Icon
 		//Image icon = new Image(getClass().getResourceAsStream("icon.png"));
 
 		Parent root = loader.load();

@@ -33,6 +33,8 @@ import net.bmagnu.dbfms.database.LocalDatabase;
 public abstract class Thumbnail {
 	
 	public abstract Image loadImage();
+	
+	public static final Image dummy = new ThumbnailFileThumbs("dummy").loadImage();
 
 	public static Thumbnail getThumbnail(String filePath, String fileThumb) {
 		if(!fileThumb.isEmpty())

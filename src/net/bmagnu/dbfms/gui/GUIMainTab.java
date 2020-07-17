@@ -45,7 +45,7 @@ public class GUIMainTab {
 		this.collection = collection;
 		
 		filePane.setOnScroll((event) -> {
-	            double deltaY = event.getDeltaY() * 6;
+	            double deltaY = event.getDeltaY() * 2;
 	            double width = fileScrollPane.getContent().getBoundsInLocal().getWidth();
 	            double vvalue = fileScrollPane.getVvalue();
 	            fileScrollPane.setVvalue(vvalue + -deltaY / width);
@@ -72,18 +72,7 @@ public class GUIMainTab {
         	fileThumb.setFitHeight(300);
         	
         	filePaneLocal.setAlignment(Pos.CENTER);
-        	filePaneLocal.getChildren().add(fileThumb);
-        	
-        	//FIXME Fix Unloading Images
-        	/*fileThumb.imageProperty().bind(Bindings.createObjectBinding(() -> {
-        		Bounds scrollBounds = fileScrollPane.localToScene(fileScrollPane.getBoundsInParent());
-        		Bounds thumbBounds = fileThumb.localToScene(fileThumb.getBoundsInLocal());
-        		if(scrollBounds.intersects(thumbBounds)) 
-        			return file.getValue().getValue().loadImage();
-        		else
-        			return null;
-        	}, filePane.boundsInLocalProperty(), fileScrollPane.boundsInParentProperty(), fileScrollPane.vvalueProperty()));
-        	*/
+        	filePaneLocal.getChildren().add(fileThumb);  	
         	
         	filePaneLocal.setMinHeight(300);
         	filePaneLocal.setMinWidth(300);
