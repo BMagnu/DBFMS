@@ -26,6 +26,10 @@ module dbfms {
 	
 	requires org.bytedeco.ffmpeg;
 	
+    requires org.bytedeco.ffmpeg.windows.x86_64; //TODO Only pick relevant
+	
+    requires org.bytedeco.ffmpeg.linux.x86_64;
+    
 	requires org.apache.derby.commons;
 	
 	requires org.apache.derby.engine;
