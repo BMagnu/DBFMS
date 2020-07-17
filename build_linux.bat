@@ -1,0 +1,1 @@
+wsl mvn clean compile package javafx:jlink
