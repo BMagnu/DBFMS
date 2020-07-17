@@ -81,7 +81,9 @@ public class DialogAddFile {
 	public boolean fileExists = false;
 
 	public void init(Collection collection, String filePath) {		
-		labelFilename.setText(filePath);
+		String filePathNew = filePath.replaceAll("'", "''");
+		
+		labelFilename.setText(filePathNew);
 
 		List<Map<String, Object>> typesSQL = executeSQL(
 				"SELECT typeName FROM M_COLLECTIONTYPES WHERE collection = '" + collection.name + "'", "typeName");
@@ -116,7 +118,7 @@ public class DialogAddFile {
 		}
 
 		List<Map<String, Object>> fileExists = executeSQL("SELECT fileID, fileThumb, rating FROM "
-				+ collection.fileDB.globalName + " WHERE filePath = '" + filePath + "'", "fileID", "fileThumb",
+				+ collection.fileDB.globalName + " WHERE filePath = '" + filePathNew + "'", "fileID", "fileThumb",
 				"rating");
 
 		String thumbFile = "";
@@ -256,6 +258,8 @@ public class DialogAddFile {
 
 		return new Dialog<DialogAddFileResult>() {
 			public Dialog<DialogAddFileResult> init() {
+				String filePathNew = filePath.replaceAll("'", "''");
+				
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("dialog_addFile.fxml"));
 
 				VBox content;
@@ -304,7 +308,7 @@ public class DialogAddFile {
 						collection.emplaceFile(controller.labelFilename.getText(), controller.thumbnailHash, Float.parseFloat(controller.textRating.getText()), typeList);
 
 						int fileID = (Integer)executeSQL("SELECT fileID FROM "
-								+ collection.fileDB.globalName + " WHERE filePath = '" + filePath + "'", "fileID").get(0).get("fileID");	
+								+ collection.fileDB.globalName + " WHERE filePath = '" + filePathNew + "'", "fileID").get(0).get("fileID");	
 						
 						if(controller.fileExists)
 							executeSQL("UPDATE " + collection.fileDB.globalName + " SET rating = "+ Float.parseFloat(controller.textRating.getText()) + ", fileThumb = '" + controller.thumbnailHash + "' WHERE fileID = " + fileID, true);
@@ -352,8 +356,9 @@ public class DialogAddFile {
 							collection.emplaceField(controller.labelFilename.getText(), field.getKey(), field.getValue());
 						}		
 						
-						executeSQL("DELETE FROM " + collection.fileTagsDB.globalName + " WHERE fileID = " + fileID
-								+ " AND tagID NOT IN (SELECT tagID FROM " + collection.tagDB.globalName + " WHERE tagName IN (" + tags + "))", true);
+						if(!tags.isEmpty())
+							executeSQL("DELETE FROM " + collection.fileTagsDB.globalName + " WHERE fileID = " + fileID
+									+ " AND tagID NOT IN (SELECT tagID FROM " + collection.tagDB.globalName + " WHERE tagName IN (" + tags + "))", true);
 					}
 
 					return data;
