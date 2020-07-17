@@ -4,7 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class DBFMS extends Application {
@@ -15,6 +14,7 @@ public class DBFMS extends Application {
 	public void start(Stage stage) throws Exception {
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("main_window.fxml"));
 		
+		//TODO Add Icon
 		//Image icon = new Image(getClass().getResourceAsStream("icon.png"));
 
 		Parent root = loader.load();

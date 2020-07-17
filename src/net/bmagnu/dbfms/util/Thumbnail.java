@@ -1,10 +1,12 @@
 package net.bmagnu.dbfms.util;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,7 +59,7 @@ public abstract class Thumbnail {
 		return new ThumbnailFileThumbs(filePath);
 	}
 	
-	public static Pair<String, Thumbnail> emplaceThumbnailInCache(String image){
+	private static Pair<String, Thumbnail> emplaceThumbnailInCache(String image){
 		String mime = "";
 		try {
 			mime = Files.probeContentType(Paths.get(image));
@@ -99,9 +101,54 @@ public abstract class Thumbnail {
 		return new Pair<>("", new ThumbnailNull());
 	}
 	
-	public static Pair<String, Thumbnail> emplaceThumbnailInCache(Thumbnail thumb) {
-		//FIXME Implement rendering 300x300 Thumb and emplace in cache
-		return null;
+	private static Dimension getScaledDimension(int original_width, int original_height) {
+
+	    int bound_width = 300;
+	    int bound_height = 300;
+	    int new_width = original_width;
+	    int new_height = original_height;
+
+	    // first check if we need to scale width
+	    if (original_width > bound_width) {
+	        //scale width to fit
+	        new_width = bound_width;
+	        //scale height to maintain aspect ratio
+	        new_height = (new_width * original_height) / original_width;
+	    }
+
+	    // then check if we need to scale even with the new height
+	    if (new_height > bound_height) {
+	        //scale height to fit instead
+	        new_height = bound_height;
+	        //scale width to maintain aspect ratio
+	        new_width = (new_height * original_width) / original_height;
+	    }
+
+	    return new Dimension(new_width, new_height);
+	}
+	
+	public static Pair<String, Thumbnail> emplaceThumbnailInCache(Image thumb) {
+		
+		java.awt.Image original = SwingFXUtils.fromFXImage(thumb, null);
+		Dimension newDim = getScaledDimension(original.getWidth(null), original.getHeight(null));
+		java.awt.Image tmp = original.getScaledInstance(newDim.width, newDim.height, java.awt.Image.SCALE_SMOOTH);
+
+		BufferedImage dimg = new BufferedImage(newDim.width, newDim.height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g2d = dimg.createGraphics();
+		g2d.drawImage(tmp, 0, 0, null);
+		g2d.dispose();
+		
+		try {
+			boolean success = ImageIO.write(dimg, "png", new File(LocalDatabase.programDataDir + "tmp.png"));
+			if(!success)
+				throw new IOException("Thumbnail rescaling Failed!");
+		} catch (IOException e) {
+			Logger.logError(e);
+			return new Pair<>("", new ThumbnailNull());
+		}
+
+		return emplaceThumbnailInCache(LocalDatabase.programDataDir + "tmp.png");
 	}
 	
 }

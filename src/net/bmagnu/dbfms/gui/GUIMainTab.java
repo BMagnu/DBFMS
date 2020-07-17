@@ -6,17 +6,14 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.util.Pair;
@@ -110,6 +107,7 @@ public class GUIMainTab {
         time3 = System.nanoTime();
         
         Logger.logInfo("Query Time: " + ((time2 - time1) / 1000000) + "ms, Display Time: " + ((time3 - time2) / 1000000) + "ms");
+        //FIXME Display Times
     }
 	
 }

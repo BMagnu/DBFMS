@@ -13,11 +13,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -62,6 +64,9 @@ public class DialogAddFile {
 	@FXML
 	private TextField textRating;
 
+	@FXML
+	private CheckBox checkCache;
+	
 	public List<String> tags = new ArrayList<>();
 
 	public Map<String, String> fields = new HashMap<>();
@@ -147,8 +152,20 @@ public class DialogAddFile {
 		}
 
 		Thumbnail thumbnail = Thumbnail.getThumbnail(filePath, thumbFile);
-		thumbnailView.setImage(thumbnail.loadImage());
-
+		
+		long time1 = System.nanoTime(), time2;
+		Image image = thumbnail.loadImage();
+		time2 = System.nanoTime();
+		thumbnailView.setImage(image);
+		
+		if(!thumbFile.isEmpty()) {
+			checkCache.setSelected(true);
+			checkCache.setDisable(true);
+		}
+		else {
+			checkCache.setSelected(time2 - time1 > 30000000); //Load longer than 30 ms
+		}
+		
 		// TODO Tag Recommendations
 	}
 
@@ -220,9 +237,12 @@ public class DialogAddFile {
 		if(selectedFile == null)
 			return;
 		
-		Pair<String, Thumbnail> thumb = Thumbnail.emplaceThumbnailInCache(selectedFile.getAbsolutePath());
+		Pair<String, Thumbnail> thumb = Thumbnail.emplaceThumbnailInCache(Thumbnail.getThumbnail(selectedFile.getAbsolutePath(), "").loadImage());
 		thumbnailHash = thumb.getKey();
 		thumbnailView.setImage(thumb.getValue().loadImage());
+		
+		checkCache.setSelected(true);
+		checkCache.setDisable(true);
 	}
 
 	@FXML
@@ -265,7 +285,10 @@ public class DialogAddFile {
 						Map<String, String> typeList = new HashMap<>();
 						List<Pair<String, String>> typeList2 = new ArrayList<>();
 						
-						//FIXME Cache Thumb if hash empty & CheckBox -> Merge
+						if(controller.thumbnailHash.isEmpty() && controller.checkCache.isSelected()) {
+							Pair<String, Thumbnail> thumb = Thumbnail.emplaceThumbnailInCache(controller.thumbnailView.getImage());
+							controller.thumbnailHash = thumb.getKey();
+						}
 						
 						//TODO This throws a loooot of exceptions. Make methods check for existance?
 						for (Entry<String, ComboBox<String>> types : controller.types.entrySet()) {

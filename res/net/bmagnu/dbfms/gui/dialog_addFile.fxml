@@ -2,12 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.StackPane?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.bmagnu.dbfms.gui.DialogAddFile">
    <children>
@@ -19,15 +21,24 @@
                   <HBox alignment="CENTER_LEFT" spacing="5.0">
                      <children>
                         <Label text="Rating:" />
-                        <TextField text="0" fx:id="textRating" prefHeight="25.0" prefWidth="50.0" />
+                        <TextField fx:id="textRating" prefHeight="25.0" prefWidth="50.0" text="0" />
                      </children>
                   </HBox>
                </children>
             </VBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+            <VBox prefHeight="200.0" prefWidth="200.0" spacing="10.0">
                <children>
-                  <ImageView fx:id="thumbnailView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <Button mnemonicParsing="false" onAction="#setThumb" prefHeight="25.0" prefWidth="200.0" text="Change Thumbnail" />
+               	  <StackPane minWidth="200.0" minHeight="200.0">
+               	  	 <children>
+                  	    <ImageView fx:id="thumbnailView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  	 </children>
+                  </StackPane>
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#setThumb" prefHeight="25.0" text="Change Thumbnail" />
+                        <CheckBox fx:id="checkCache" mnemonicParsing="false" prefHeight="25.0" text="Cacheing" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
                </children>
                <HBox.margin>
                   <Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
@@ -45,7 +56,7 @@
                         <VBox fx:id="listTags" />
                      </content>
                   </ScrollPane>
-                  <TextField fx:id="textTag" onAction="#addTag"/>
+                  <TextField fx:id="textTag" onAction="#addTag" />
                   <Button mnemonicParsing="false" onAction="#addTag" prefWidth="105.0" text="Add Tag" />
                </children>
             </VBox>
@@ -59,8 +70,8 @@
                   </ScrollPane>
                   <HBox>
                      <children>
-                        <TextField fx:id="textFieldName" prefHeight="25.0" prefWidth="100.0" onAction="#addField" />
-                        <TextField fx:id="textFieldContent" HBox.hgrow="ALWAYS" onAction="#addField" />
+                        <TextField fx:id="textFieldName" onAction="#addField" prefHeight="25.0" prefWidth="100.0" />
+                        <TextField fx:id="textFieldContent" onAction="#addField" HBox.hgrow="ALWAYS" />
                      </children>
                   </HBox>
                   <Button mnemonicParsing="false" onAction="#addField" prefWidth="105.0" text="Add Field" />

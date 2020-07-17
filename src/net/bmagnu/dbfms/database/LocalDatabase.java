@@ -19,8 +19,8 @@ import net.bmagnu.dbfms.util.Logger;
 public class LocalDatabase {
 
 	private static final String connectionUrl;
-	private static final String programDataDir;
-
+	
+	public static final String programDataDir;
 	public static final String thumbDBDir;
 	public static final char systemDelim;
 	
