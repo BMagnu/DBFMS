@@ -74,7 +74,7 @@ public class GUIMainTab {
         	filePaneLocal.setAlignment(Pos.CENTER);
         	filePaneLocal.getChildren().add(fileThumb);
         	
-        	//TODO Fix Unloading Images
+        	//FIXME Fix Unloading Images
         	/*fileThumb.imageProperty().bind(Bindings.createObjectBinding(() -> {
         		Bounds scrollBounds = fileScrollPane.localToScene(fileScrollPane.getBoundsInParent());
         		Bounds thumbBounds = fileThumb.localToScene(fileThumb.getBoundsInLocal());

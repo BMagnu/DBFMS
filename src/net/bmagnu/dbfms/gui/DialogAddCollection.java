@@ -33,6 +33,8 @@ public class DialogAddCollection {
 	
 	@FXML
 	public void addType(ActionEvent e) {
+		//FIXME UX Improvements
+		
 		String typeName = typeField.getText();
 		if(types.contains(typeName))
 			return;

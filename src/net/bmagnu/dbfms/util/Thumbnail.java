@@ -35,8 +35,6 @@ public abstract class Thumbnail {
 	public abstract Image loadImage();
 
 	public static Thumbnail getThumbnail(String filePath, String fileThumb) {
-		//TODO Cache Thumbs?
-		
 		if(!fileThumb.isEmpty())
 			return new ThumbnailImage(LocalDatabase.thumbDBDir + fileThumb);
 		

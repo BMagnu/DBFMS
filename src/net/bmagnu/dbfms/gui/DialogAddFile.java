@@ -172,7 +172,7 @@ public class DialogAddFile {
 	@FXML
 	public void addTag(ActionEvent e) {
 		e.consume();
-		
+		//TODO Remove Spaces
 		addTagByName(textTag.getText());
 	}
 
