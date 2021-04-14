@@ -2,13 +2,14 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 
 <HBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="-Infinity" prefWidth="-Infinity" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.bmagnu.dbfms.gui.GUIMainTab">
@@ -23,6 +24,12 @@
                   <Label text="Search Query" textAlignment="CENTER" VBox.vgrow="ALWAYS" />
                   <TextField fx:id="searchQueryField" onAction="#search_onSearch" />
                   <Button mnemonicParsing="false" onAction="#search_onSearch" prefHeight="25.0" text="Button" VBox.vgrow="ALWAYS" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                     <children>
+                        <Label text="Sort By: " />
+                        <ComboBox fx:id="sortModeBox" visibleRowCount="7" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
             <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
@@ -37,7 +44,7 @@
             </Label>
          </children>
       </VBox>
-      <VBox HBox.hgrow="ALWAYS" >
+      <VBox HBox.hgrow="ALWAYS">
       	<children>
      	  <ScrollPane fx:id="fileScrollPane" hbarPolicy="NEVER" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
             <content>
@@ -48,7 +55,7 @@
               </TilePane>
             </content>
           </ScrollPane>
-          <Pane prefHeight="${labelPerformance.height}" minHeight="${labelPerformance.height}" />
+          <Pane minHeight="${labelPerformance.height}" prefHeight="${labelPerformance.height}" />
         </children>
       </VBox>
    </children>

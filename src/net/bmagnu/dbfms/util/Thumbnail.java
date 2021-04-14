@@ -32,7 +32,16 @@ import net.bmagnu.dbfms.database.LocalDatabase;
 
 public abstract class Thumbnail {
 	
-	public abstract Image loadImage();
+	protected abstract Image loadImage();
+	
+	private Image cache = null;
+	
+	public Image getImage() {
+		if (cache == null)
+			cache = loadImage();
+		
+		return cache;
+	}
 	
 	public static final Image dummy = new ThumbnailFileThumbs("dummy").loadImage();
 

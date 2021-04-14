@@ -3,12 +3,12 @@ package net.bmagnu.dbfms.gui;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.LinkedList;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -17,11 +17,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
-import javafx.util.Pair;
 
 import net.bmagnu.dbfms.database.Collection;
+import net.bmagnu.dbfms.database.DatabaseFileEntry;
+import net.bmagnu.dbfms.database.DatabaseFileEntryComparator;
 import net.bmagnu.dbfms.util.Logger;
-import net.bmagnu.dbfms.util.Thumbnail;
 
 public class GUIMainTab {
 
@@ -35,11 +35,15 @@ public class GUIMainTab {
 	private ScrollPane fileScrollPane;
 	
 	@FXML
+	private ComboBox<DatabaseFileEntryComparator.SortMode> sortModeBox;
+	
+	@FXML
 	private Label labelPerformance;
 	
 	public Collection collection;
 	
-	private Map<Integer, Pair<String, Thumbnail>> files;
+	private LinkedList<DatabaseFileEntry> files;
+	private DatabaseFileEntryComparator sorter = new DatabaseFileEntryComparator();
 	
 	public void init(Collection collection) {
 		this.collection = collection;
@@ -50,23 +54,52 @@ public class GUIMainTab {
 	            double vvalue = fileScrollPane.getVvalue();
 	            fileScrollPane.setVvalue(vvalue + -deltaY / width);
 	    });
+		
+		sortModeBox.getItems().addAll(DatabaseFileEntryComparator.SortMode.values());
+		sortModeBox.setValue(DatabaseFileEntryComparator.SortMode.SORT_ARBITRARY);
+		sortModeBox.valueProperty().addListener((obs, oldV, newV) -> {
+			sorter.mode = newV;
+			long time1 = System.nanoTime(), time2;
+			displayFiles();
+			time2 = System.nanoTime();
+			Logger.logInfo("Display Time: " + ((time2 - time1) / 1000000) + "ms");
+		});
+
+		
+		searchFiles("");
+		displayFiles();
 	}
 	
 	@FXML
 	public void search_onSearch(ActionEvent event) {
 		long time1 = System.nanoTime(), time2, time3;
+		searchFiles(searchQueryField.getText());
 		
-        files = collection.queryFiles(searchQueryField.getText());
+		time2 = System.nanoTime();
+       
+		displayFiles();
+		
+        time3 = System.nanoTime();
         
-        time2 = System.nanoTime();
-        
+        String query = "Query Time: " + ((time2 - time1) / 1000000) + "ms, Display Time: " + ((time3 - time2) / 1000000) + "ms";
+        labelPerformance.setText(query);
+        Logger.logInfo(query);
+    }
+	
+	public void searchFiles(String queryString) {
+        files = new LinkedList<>(collection.queryFiles(queryString).values());
+	}
+	
+	public void displayFiles() {
+		files.sort(sorter);
+		
         filePane.getChildren().clear();
         
-        for(Entry<Integer, Pair<String, Thumbnail>> file : files.entrySet()) {
+        for(DatabaseFileEntry file : files) {
         	StackPane filePaneLocal = new StackPane();
         	ImageView fileThumb = new ImageView();
    
-        	fileThumb.setImage(file.getValue().getValue().loadImage());
+        	fileThumb.setImage(file.thumbnail.getImage());
         	fileThumb.setPreserveRatio(true);
         	fileThumb.setFitWidth(300);
         	fileThumb.setFitHeight(300);
@@ -80,13 +113,13 @@ public class GUIMainTab {
         	filePaneLocal.setOnMouseClicked((mouseEvent) -> {
         		if(mouseEvent.getButton() == MouseButton.PRIMARY) {
         			try {
-						Desktop.getDesktop().open(new File(file.getValue().getKey()));
+						Desktop.getDesktop().open(new File(file.filename));
 					} catch (IOException e) {
 						Logger.logError(e);
 					}
         		}
         		else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-        			Dialog<DialogAddFileResult> dialog = DialogAddFile.getDialog(collection, file.getValue().getKey());
+        			Dialog<DialogAddFileResult> dialog = DialogAddFile.getDialog(collection, file.filename);
 
         			dialog.showAndWait();
         		}
@@ -96,12 +129,6 @@ public class GUIMainTab {
         	
         	filePane.getChildren().add(filePaneLocal);
         }
-        
-        time3 = System.nanoTime();
-        
-        String query = "Query Time: " + ((time2 - time1) / 1000000) + "ms, Display Time: " + ((time3 - time2) / 1000000) + "ms";
-        labelPerformance.setText(query);
-        Logger.logInfo(query);
-    }
+	}
 	
 }

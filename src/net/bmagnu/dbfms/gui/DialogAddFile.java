@@ -157,7 +157,7 @@ public class DialogAddFile {
 		Thumbnail thumbnail = Thumbnail.getThumbnail(filePath, thumbFile);
 		
 		long time1 = System.nanoTime(), time2;
-		Image image = thumbnail.loadImage();
+		Image image = thumbnail.getImage();
 		time2 = System.nanoTime();
 		thumbnailView.setImage(image);
 		
@@ -176,7 +176,11 @@ public class DialogAddFile {
 	public void addTag(ActionEvent e) {
 		e.consume();
 		
-		addTagByName(Collection.sanitize(textTag.getText()));
+		String tag = Collection.sanitize(textTag.getText());
+		if(tag.isBlank())
+			return;		
+		
+		addTagByName(tag);
 	}
 
 	private void addTagByName(String tagName) {
@@ -207,6 +211,9 @@ public class DialogAddFile {
 		
 		String fieldName = Collection.sanitize(textFieldName.getText());
 		if (fields.get(fieldName) != null)
+			return;
+		
+		if(fieldName.isBlank())
 			return;
 
 		addFieldByName(fieldName, Collection.sanitize(textFieldContent.getText()));
@@ -240,9 +247,9 @@ public class DialogAddFile {
 		if(selectedFile == null)
 			return;
 		
-		Pair<String, Thumbnail> thumb = Thumbnail.emplaceThumbnailInCache(Thumbnail.getThumbnail(selectedFile.getAbsolutePath(), "").loadImage());
+		Pair<String, Thumbnail> thumb = Thumbnail.emplaceThumbnailInCache(Thumbnail.getThumbnail(selectedFile.getAbsolutePath(), "").getImage());
 		thumbnailHash = thumb.getKey();
-		thumbnailView.setImage(thumb.getValue().loadImage());
+		thumbnailView.setImage(thumb.getValue().getImage());
 		
 		checkCache.setSelected(true);
 		checkCache.setDisable(true);

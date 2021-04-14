@@ -13,6 +13,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
+import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -43,6 +44,9 @@ public class DialogAddCollection {
 		typeField.setText("");
 		
 		if(types.contains(typeName))
+			return;
+		
+		if(typeName.isBlank())
 			return;
 		
 		types.add(typeName);
@@ -91,6 +95,12 @@ public class DialogAddCollection {
 				controller.typeField.setOnAction((event) -> {
 					controller.addTypeByName();
 					event.consume();
+				});
+				
+				final Node buttonOK = dialogPane.lookupButton(ButtonType.OK);
+				buttonOK.setDisable(true);
+				controller.collectionField.textProperty().addListener((obs, oldV, newV) -> {
+					buttonOK.setDisable(newV.isBlank());
 				});
 			
 				setResultConverter((dialogButton) -> {

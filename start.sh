@@ -1,1 +1,1 @@
-./bin/javaw --module dbfms/net.bmagnu.dbfms.Main
+./bin/java --module dbfms/net.bmagnu.dbfms.Main
