@@ -49,21 +49,28 @@ public abstract class Thumbnail {
 		if(!fileThumb.isEmpty())
 			return new ThumbnailImage(LocalDatabase.thumbDBDir + fileThumb);
 		
-		String mime = "";
 		try {
-			mime = Files.probeContentType(Paths.get(filePath));
+			if(filePath.startsWith("http://") || filePath.startsWith("https://"))
+				return new ThumbnailFileThumbs(filePath); //TODO WebIcon
+			
+			String mime = "";
+			Path path = Paths.get(filePath);
+			mime = Files.probeContentType(path);
+			
+			if(Files.isDirectory(path))
+				return new ThumbnailDirectory(filePath);
+			
+			if(mime == null)
+				return new ThumbnailFileThumbs(filePath);
+			
+			if(!mime.isEmpty() && mime.split("/")[0].equals("image"))
+				return new ThumbnailImage(filePath);
+			
+			if(!mime.isEmpty() && mime.split("/")[0].equals("video"))
+				return new ThumbnailVideo(new File(filePath));
 		} catch (IOException e) {
 			Logger.logError(e);
 		}
-		
-		if(mime == null)
-			return new ThumbnailDirectory(filePath);
-		
-		if(!mime.isEmpty() && mime.split("/")[0].equals("image"))
-			return new ThumbnailImage(filePath);
-		
-		if(!mime.isEmpty() && mime.split("/")[0].equals("video"))
-			return new ThumbnailVideo(new File(filePath));
 		
 		return new ThumbnailFileThumbs(filePath);
 	}

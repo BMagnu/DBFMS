@@ -2,6 +2,7 @@ package net.bmagnu.dbfms.database;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -25,7 +26,7 @@ public class DatabaseFileEntry {
 		
 			created = attr.creationTime();
 			lastModified = attr.lastModifiedTime();
-		} catch (IOException e) {
+		} catch (IOException | InvalidPathException e) {
 			created = FileTime.fromMillis(0);
 			lastModified = FileTime.fromMillis(0);
 		}

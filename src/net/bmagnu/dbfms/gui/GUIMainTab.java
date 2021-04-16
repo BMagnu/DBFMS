@@ -3,6 +3,8 @@ package net.bmagnu.dbfms.gui;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 
 import javafx.event.ActionEvent;
@@ -59,12 +61,8 @@ public class GUIMainTab {
 		sortModeBox.setValue(DatabaseFileEntryComparator.SortMode.SORT_ARBITRARY);
 		sortModeBox.valueProperty().addListener((obs, oldV, newV) -> {
 			sorter.mode = newV;
-			long time1 = System.nanoTime(), time2;
 			displayFiles();
-			time2 = System.nanoTime();
-			Logger.logInfo("Display Time: " + ((time2 - time1) / 1000000) + "ms");
 		});
-
 		
 		searchFiles("");
 		displayFiles();
@@ -113,8 +111,11 @@ public class GUIMainTab {
         	filePaneLocal.setOnMouseClicked((mouseEvent) -> {
         		if(mouseEvent.getButton() == MouseButton.PRIMARY) {
         			try {
-						Desktop.getDesktop().open(new File(file.filename));
-					} catch (IOException e) {
+        				if (file.filename.startsWith("http://") || file.filename.startsWith("https://"))
+        					Desktop.getDesktop().browse(new URI(file.filename));
+        				else
+        					Desktop.getDesktop().open(new File(file.filename));
+					} catch (IOException | URISyntaxException e) {
 						Logger.logError(e);
 					}
         		}

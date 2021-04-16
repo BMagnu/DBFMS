@@ -215,8 +215,12 @@ public class DialogAddFile {
 		
 		if(fieldName.isBlank())
 			return;
-
-		addFieldByName(fieldName, Collection.sanitize(textFieldContent.getText()));
+		
+		String content = Collection.sanitize(textFieldContent.getText());
+		if(content.isBlank())
+			return;
+		
+		addFieldByName(fieldName, content);
 	}
 	
 	private void addFieldByName(String fieldName, String content) {

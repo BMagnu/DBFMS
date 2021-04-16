@@ -4,15 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -25,6 +28,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
@@ -69,6 +73,11 @@ public class GUIMainWindow {
 		collectionTabs.setOnDragOver((event) -> {
 			if (event.getGestureSource() != collectionTabs && event.getDragboard().hasFiles()) {
 				event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+			}
+			else if(event.getGestureSource() != collectionTabs && event.getDragboard().hasUrl()) {
+				String url = event.getDragboard().getUrl();
+				if(url.startsWith("http://") || url.startsWith("https://"))
+					event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
 			}
 			event.consume();
         });
@@ -194,6 +203,27 @@ public class GUIMainWindow {
     }
 	
 	@FXML
+	public void menuCollection_onAddURL(ActionEvent event) {
+		TextInputDialog td = new TextInputDialog("");
+		td.getDialogPane().setMinWidth(400);
+		td.setTitle("Add URL");
+		td.setHeaderText("Enter URL");
+		td.showAndWait().ifPresent((url) -> {
+			if (!(url.startsWith("http://")  || url.startsWith("https://"))) {
+				url = "https://" + url;
+			}
+			
+			try {
+				new URL(url).toURI();
+			} catch (MalformedURLException | URISyntaxException e) {
+				return;
+			}
+			
+			addFile(url);
+		});
+    }
+	
+	@FXML
 	public void menuCollection_onAddDir(ActionEvent event) {
 		DirectoryChooser fileChooser = new DirectoryChooser();
 		File selectedFile = fileChooser.showDialog(collectionTabs.getScene().getWindow());
@@ -206,7 +236,12 @@ public class GUIMainWindow {
 	
 	@FXML
 	public void tab_droppedFile(DragEvent event) {
-		List<String> files = event.getDragboard().getFiles().stream().map(File::getAbsolutePath).collect(Collectors.toList());
+		List<String> files = new ArrayList<String>();
+		if (event.getDragboard().hasFiles())
+			event.getDragboard().getFiles().stream().map(File::getAbsolutePath).forEachOrdered(files::add);
+		else if (event.getDragboard().hasUrl()) {
+			files.add(event.getDragboard().getUrl());
+		}
 		
 		event.setDropCompleted(true);
 

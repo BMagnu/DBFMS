@@ -25,6 +25,7 @@
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onManageTags" text="Manage Tags" />
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddFile" text="Add File" />
+                <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddURL" text="Add URL" />
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddDir" text="Add Directory" />
               </items>
             </Menu>
