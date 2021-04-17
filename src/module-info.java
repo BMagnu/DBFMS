@@ -21,6 +21,8 @@ module dbfms {
 	requires java.sql;
 	
 	requires java.desktop;
+	
+	requires java.net.http;
 
 	requires org.bytedeco.javacv;
 	

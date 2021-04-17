@@ -1,7 +1,12 @@
 package net.bmagnu.dbfms.util;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +18,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -25,6 +31,7 @@ import net.bmagnu.dbfms.util.thumbnails.ThumbnailDirectory;
 import net.bmagnu.dbfms.util.thumbnails.ThumbnailFileThumbs;
 import net.bmagnu.dbfms.util.thumbnails.ThumbnailImage;
 import net.bmagnu.dbfms.util.thumbnails.ThumbnailVideo;
+import net.bmagnu.dbfms.util.thumbnails.ThumbnailWeb;
 
 public abstract class Thumbnail {
 	
@@ -47,7 +54,7 @@ public abstract class Thumbnail {
 		
 		try {
 			if(filePath.startsWith("http://") || filePath.startsWith("https://"))
-				return new ThumbnailFileThumbs(filePath); //TODO WebIcon
+				return new ThumbnailWeb(filePath); //TODO WebIcon
 			
 			String mime = "";
 			Path path = Paths.get(filePath);
@@ -161,6 +168,53 @@ public abstract class Thumbnail {
 		}
 
 		return emplaceThumbnailInCache(LocalDatabase.programDataDir + "tmp.png");
+	}
+	
+	private static final Font font = new Font("Arial MS Unicode", Font.PLAIN, 20);
+	private static final Map<?, ?> fontRenderHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
+	protected static Image makeIconWithText(BufferedImage icon, String text, String text2) {
+		BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g = (Graphics2D)image.getGraphics();
+		if (fontRenderHints == null) {
+			g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+		}
+		else {
+			g.setRenderingHints(fontRenderHints);
+		}
+
+		g.drawImage(icon, 150 - icon.getWidth()/2, 150 - icon.getHeight()/2, null); 
+		
+		g.setColor(Color.BLACK);
+		
+		FontMetrics metrics = g.getFontMetrics(font);
+		float intendedSize = (float)(font.getSize2D() * 290.0f/Math.max(Math.max(metrics.stringWidth(text), metrics.stringWidth(text2)), 290));
+		boolean cut = intendedSize < 10.0f;
+		Font fontNew = font.deriveFont(cut ? 10.0f : intendedSize);
+		int lineDistance = metrics.getHeight();
+		
+		metrics = g.getFontMetrics(fontNew);
+		while(cut && metrics.stringWidth(text) > 290) {
+			text = text.substring(0, text.length() - 1);
+		}
+	    int x = 150 - (metrics.stringWidth(text) / 2);
+	    int y = 250 - (metrics.getHeight() / 2) + metrics.getAscent();
+	    g.setFont(fontNew);
+	    g.drawString(text, x, y);
+	    if(!text2.isBlank()) {
+			while(cut && metrics.stringWidth(text2) > 290) {
+				text2 = text2.substring(0, text2.length() - 1);
+			}
+	    	x = 150 - (metrics.stringWidth(text2) / 2);
+	    	y += lineDistance;
+	    	g.drawString(text2, x, y);
+	    }
+		
+		return SwingFXUtils.toFXImage(image, null);
+	}
+	
+	protected static Image makeIconWithText(BufferedImage icon, String text) {
+		return makeIconWithText(icon, text, "");
 	}
 	
 }
