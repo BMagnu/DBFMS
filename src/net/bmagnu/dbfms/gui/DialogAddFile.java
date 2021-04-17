@@ -166,7 +166,7 @@ public class DialogAddFile {
 			checkCache.setDisable(true);
 		}
 		else {
-			checkCache.setSelected(time2 - time1 > 30000000); //Load longer than 30 ms
+			checkCache.setSelected(time2 - time1 > 30000000 || thumbnail.shouldCache()); //Load longer than 30 ms or thumbnail like web that should be cached regardless
 		}
 		
 		// TODO Tag Recommendations

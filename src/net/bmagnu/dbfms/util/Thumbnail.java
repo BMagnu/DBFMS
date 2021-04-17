@@ -1,9 +1,6 @@
 package net.bmagnu.dbfms.util;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,27 +9,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Formatter;
 
 import javax.imageio.ImageIO;
 
-import org.bytedeco.ffmpeg.global.avutil;
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber.Exception;
-import org.bytedeco.javacv.JavaFXFrameConverter;
-
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.util.Pair;
 
 import net.bmagnu.dbfms.database.LocalDatabase;
+import net.bmagnu.dbfms.util.thumbnails.ThumbnailDirectory;
+import net.bmagnu.dbfms.util.thumbnails.ThumbnailFileThumbs;
+import net.bmagnu.dbfms.util.thumbnails.ThumbnailImage;
+import net.bmagnu.dbfms.util.thumbnails.ThumbnailVideo;
 
 public abstract class Thumbnail {
 	
 	protected abstract Image loadImage();
+	
+	public abstract boolean shouldCache();
 	
 	private Image cache = null;
 	
@@ -42,8 +40,6 @@ public abstract class Thumbnail {
 		
 		return cache;
 	}
-	
-	public static final Image dummy = new ThumbnailFileThumbs("dummy").loadImage();
 
 	public static Thumbnail getThumbnail(String filePath, String fileThumb) {
 		if(!fileThumb.isEmpty())
@@ -106,7 +102,7 @@ public abstract class Thumbnail {
 				
 				imageStream.close();
 				
-				Files.copy(Paths.get(image), Paths.get(LocalDatabase.thumbDBDir + hash));
+				Files.copy(Paths.get(image), Paths.get(LocalDatabase.thumbDBDir + hash), StandardCopyOption.REPLACE_EXISTING);
 				
 				return new Pair<>(hash, new ThumbnailImage(LocalDatabase.thumbDBDir + hash));
 			} catch (IOException e1) {
@@ -169,143 +165,15 @@ public abstract class Thumbnail {
 	
 }
 
-class ThumbnailImage extends Thumbnail{
-	
-
-	private final Path path;
-	
-	public ThumbnailImage(String path) {
-		this.path = Paths.get(path);
-	}
-	
-	@Override
-	public Image loadImage() {
-		return new Image(path.toUri().toString());
-	}
-	
-}
-
-class ThumbnailVideo extends Thumbnail{
-	
-	private final FFmpegFrameGrabber g;
-	
-	private static final JavaFXFrameConverter conv = new JavaFXFrameConverter();
-	
-	static {
-		avutil.av_log_set_level(avutil.AV_LOG_QUIET);
-	}
-	
-	public ThumbnailVideo(File path) {
-		g = new FFmpegFrameGrabber(path);
-	}
-	
-	@Override
-	public Image loadImage() {
-		Image image = null;
-		
-		try {
-			g.start();
-			g.setTimestamp(g.getLengthInTime() / 3, false);
-			
-			Frame frame = g.grabImage();
-			
-			image = conv.convert(frame);
-			
-			g.stop();
-			g.close();
-		} catch (Exception e) {
-			Logger.logError(e);
-		}
-		
-		return image;
-	}
-	
-}
-
-class ThumbnailFileThumbs extends Thumbnail {
-	
-	private final String path;
-	
-	private static final Font font = new Font("Arial", Font.PLAIN, 20);
-	
-	private static BufferedImage icon; 
-	
-	static {
-		try {
-			icon = ImageIO.read(ThumbnailDirectory.class.getResource("icon_file.png"));
-		} catch (IOException e) {
-			icon = null;
-		}
-	}
-	
-	public ThumbnailFileThumbs(String path) {
-		String[] split = path.split("/|\\\\");
-		this.path = split[split.length - 1];
-	}
-	
-	@Override
-	public Image loadImage() {
-		
-		BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
-
-		Graphics2D g = (Graphics2D)image.getGraphics();
-	
-		g.setColor(Color.BLACK);
-		FontMetrics metrics = g.getFontMetrics(font);
-	    int x = 150 - (metrics.stringWidth(path) / 2);
-	    int y = 250 - (metrics.getHeight() / 2) + metrics.getAscent();
-	    g.setFont(font);
-	    g.drawString(path, x, y);
-	    g.drawImage(icon, 150 - icon.getWidth()/2, 150 - icon.getHeight()/2, null);
-		
-		return SwingFXUtils.toFXImage(image, null);
-	}
-}
-
-class ThumbnailDirectory extends Thumbnail {
-	
-	private final String path;
-	
-	private static final Font font = new Font("Arial", Font.PLAIN, 20);
-	
-	private static BufferedImage icon; 
-	
-	static {
-		try {
-			icon = ImageIO.read(ThumbnailDirectory.class.getResource("icon_folder.png"));
-		} catch (IOException e) {
-			icon = null;
-		}
-	}
-	
-	public ThumbnailDirectory(String path) {
-		String[] split = path.split("/|\\\\");
-		this.path = split[split.length - 1];
-	}
-	
-	@Override
-	public Image loadImage() {
-		
-		BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
-
-		Graphics2D g = (Graphics2D)image.getGraphics();
-	
-		g.setColor(Color.BLACK);
-		FontMetrics metrics = g.getFontMetrics(font);
-	    int x = 150 - (metrics.stringWidth(path) / 2);
-	    int y = 250 - (metrics.getHeight() / 2) + metrics.getAscent();
-	    g.setFont(font);
-	    g.drawString(path, x, y);
-	    g.drawImage(icon, 150 - icon.getWidth()/2, 150 - icon.getHeight()/2, null);
-		
-		return SwingFXUtils.toFXImage(image, null);
-	}
-}
-
 class ThumbnailNull extends Thumbnail {
 	
 	@Override
 	public Image loadImage() {
 		return null;
+	}
+	
+	@Override
+	public boolean shouldCache() {
+		return false;
 	}
 }
