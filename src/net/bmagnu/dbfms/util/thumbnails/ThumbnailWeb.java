@@ -72,10 +72,12 @@ public class ThumbnailWeb extends Thumbnail {
 				}
 			}
 			
-			Pattern titlePattern = Pattern.compile("<title>[^<]*");
+			Pattern titlePattern = Pattern.compile("<title[^>]*?>[^<]*");
 			Matcher titleMatcher = titlePattern.matcher(html);
-			if(titleMatcher.find())
-				title = titleMatcher.group().substring(7);
+			if(titleMatcher.find()) {
+				String tempTitle = titleMatcher.group();
+				title = tempTitle.substring(tempTitle.indexOf('>') + 1);
+			}
 			
 
 		} catch (IOException | InterruptedException e) {
@@ -124,7 +126,7 @@ public class ThumbnailWeb extends Thumbnail {
 		}
 
 		if (largest != null)
-			return super.makeIconWithText(SwingFXUtils.fromFXImage(largest, null), url, title);
+			return super.makeIconWithText(SwingFXUtils.fromFXImage(largest, null), title, "", url);
 		
 		return null;
 	}

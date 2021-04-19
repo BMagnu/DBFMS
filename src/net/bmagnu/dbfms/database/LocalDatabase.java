@@ -31,10 +31,10 @@ public class LocalDatabase {
 		
 
 		if ((System.getProperty("os.name")).toUpperCase(Locale.ENGLISH).contains("WIN")) {
-			programDataDir = System.getenv("AppData") + "\\" + "DBFSM\\";
+			programDataDir = System.getenv("AppData") + "\\" + "DBFMS\\";
 			systemDelim = '\\';
 		} else {
-			programDataDir = System.getProperty("user.home") + "/" + ".dbfsm/";
+			programDataDir = System.getProperty("user.home") + "/" + ".dbfms/";
 			systemDelim = '/';
 		}
 

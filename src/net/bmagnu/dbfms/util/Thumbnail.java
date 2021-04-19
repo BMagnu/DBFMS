@@ -27,6 +27,7 @@ import javafx.scene.image.Image;
 import javafx.util.Pair;
 
 import net.bmagnu.dbfms.database.LocalDatabase;
+import net.bmagnu.dbfms.util.thumbnails.ThumbnailAudio;
 import net.bmagnu.dbfms.util.thumbnails.ThumbnailDirectory;
 import net.bmagnu.dbfms.util.thumbnails.ThumbnailFileThumbs;
 import net.bmagnu.dbfms.util.thumbnails.ThumbnailImage;
@@ -71,6 +72,9 @@ public abstract class Thumbnail {
 			
 			if(!mime.isEmpty() && mime.split("/")[0].equals("video"))
 				return new ThumbnailVideo(new File(filePath));
+			
+			if(!mime.isEmpty() && mime.split("/")[0].equals("audio"))
+				return new ThumbnailAudio(filePath);
 		} catch (IOException e) {
 			Logger.logError(e);
 		}
@@ -121,9 +125,10 @@ public abstract class Thumbnail {
 	}
 	
 	private static Dimension getScaledDimension(int original_width, int original_height) {
-
-	    int bound_width = 300;
-	    int bound_height = 300;
+		return getScaledDimension(original_width, original_height, 300, 300);
+	}
+	
+	private static Dimension getScaledDimension(int original_width, int original_height, int bound_width, int bound_height) {
 	    int new_width = original_width;
 	    int new_height = original_height;
 
@@ -172,7 +177,7 @@ public abstract class Thumbnail {
 	
 	private static final Font font = new Font("Arial MS Unicode", Font.PLAIN, 20);
 	private static final Map<?, ?> fontRenderHints = (Map<?, ?>) Toolkit.getDefaultToolkit().getDesktopProperty("awt.font.desktophints");
-	protected static Image makeIconWithText(BufferedImage icon, String text, String text2) {
+	protected static Image makeIconWithText(BufferedImage icon, String text, String text2, String textTop) {
 		BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
 
 		Graphics2D g = (Graphics2D)image.getGraphics();
@@ -183,12 +188,15 @@ public abstract class Thumbnail {
 			g.setRenderingHints(fontRenderHints);
 		}
 
-		g.drawImage(icon, 150 - icon.getWidth()/2, 150 - icon.getHeight()/2, null); 
+		Dimension imageSize = getScaledDimension(icon.getWidth(), icon.getHeight(), 144, 144);
+		java.awt.Image tmp = icon.getScaledInstance(imageSize.width, imageSize.height, java.awt.Image.SCALE_SMOOTH);
+		g.drawImage(tmp, 150 - tmp.getWidth(null)/2, 150 - tmp.getHeight(null)/2, null); 
 		
 		g.setColor(Color.BLACK);
 		
 		FontMetrics metrics = g.getFontMetrics(font);
-		float intendedSize = (float)(font.getSize2D() * 290.0f/Math.max(Math.max(metrics.stringWidth(text), metrics.stringWidth(text2)), 290));
+		int maxWidth = Math.max(metrics.stringWidth(text), Math.max(metrics.stringWidth(text2), metrics.stringWidth(textTop)));
+		float intendedSize = (float)(font.getSize2D() * 290.0f/Math.max(maxWidth, 290));
 		boolean cut = intendedSize < 10.0f;
 		Font fontNew = font.deriveFont(cut ? 10.0f : intendedSize);
 		int lineDistance = metrics.getHeight();
@@ -209,12 +217,21 @@ public abstract class Thumbnail {
 	    	y += lineDistance;
 	    	g.drawString(text2, x, y);
 	    }
+	    
+	    if(!textTop.isBlank()) {
+			while(cut && metrics.stringWidth(textTop) > 290) {
+				textTop = textTop.substring(0, textTop.length() - 1);
+			}
+	    	x = 150 - (metrics.stringWidth(textTop) / 2);
+	    	y = 50;
+	    	g.drawString(textTop, x, y);
+	    }
 		
 		return SwingFXUtils.toFXImage(image, null);
 	}
 	
 	protected static Image makeIconWithText(BufferedImage icon, String text) {
-		return makeIconWithText(icon, text, "");
+		return makeIconWithText(icon, text, "", "");
 	}
 	
 }
