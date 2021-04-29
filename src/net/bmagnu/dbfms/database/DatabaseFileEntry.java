@@ -14,6 +14,7 @@ public class DatabaseFileEntry {
 	
 	public String filename;
 	public Thumbnail thumbnail;
+	public String thumbHash;
 	public float rating;
 	
 	private FileTime lastModified = null;
@@ -46,10 +47,11 @@ public class DatabaseFileEntry {
 		return created;
 	}
 	
-	public DatabaseFileEntry(String filename, Thumbnail thumbnail, float rating) {
+	public DatabaseFileEntry(String filename, Thumbnail thumbnail, float rating, String thumbHash) {
 		this.filename = filename;
 		this.thumbnail = thumbnail;
 		this.rating = rating;
+		this.thumbHash = thumbHash;
 	}
 
 }

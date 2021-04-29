@@ -177,8 +177,9 @@ public class Collection {
 		}
 		tables.stream().forEach((map) -> {
 			String fileName = (String) map.get("filePath");
+			String fileThumb = (String) map.get("fileThumb");
 			result.put((Integer) map.get("fileID"),
-					new DatabaseFileEntry(fileName, Thumbnail.getThumbnail(fileName, (String) map.get("fileThumb")), (Float)map.get("rating")));
+					new DatabaseFileEntry(fileName, Thumbnail.getThumbnail(fileName, fileThumb), (Float)map.get("rating"), fileThumb));
 		});
 
 		return result;

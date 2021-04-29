@@ -71,6 +71,10 @@ public class GUIMainTab {
 	
 	@FXML
 	public void search_onSearch(ActionEvent event) {
+		doQuery();
+    }
+	
+	public void doQuery() {
 		long time1 = System.nanoTime(), time2, time3;
 		searchFiles(searchQueryField.getText());
 		
@@ -83,7 +87,7 @@ public class GUIMainTab {
         String query = "Query Time: " + ((time2 - time1) / 1000000) + "ms, Display Time: " + ((time3 - time2) / 1000000) + "ms";
         labelPerformance.setText(query);
         Logger.logInfo(query);
-    }
+	}
 	
 	public void searchFiles(String queryString) {
         files = new LinkedList<>(collection.queryFiles(queryString).values());
@@ -113,7 +117,7 @@ public class GUIMainTab {
         	ContextMenu ctxMenu;
     		try {
     			ctxMenu = loaderCtx.load();
-    			((CTXMenuFile) loaderCtx.getController()).init(collection, file.filename);
+    			((CTXMenuFile) loaderCtx.getController()).init(this, file);
     		} catch (IOException e) {
     			Logger.logError(e);
     			continue;

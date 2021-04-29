@@ -24,16 +24,20 @@ import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Menu;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+
 import net.bmagnu.dbfms.Main;
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.database.LocalDatabase;
@@ -83,8 +87,12 @@ public class GUIMainWindow {
         });
 	}
 	
+	public GUIMainTab getCollectionTab() {
+		return tabs.get(collectionTabs.getSelectionModel().getSelectedItem().getText());
+	}
+	
 	private Collection getCollection() {
-		return tabs.get(collectionTabs.getSelectionModel().getSelectedItem().getText()).collection;
+		return getCollectionTab().collection;
 	}
 	
 	@FXML
@@ -189,6 +197,8 @@ public class GUIMainWindow {
 		Dialog<DialogAddFileResult> dialog = DialogAddFile.getDialog(getCollection(), filePath);
 
 		dialog.showAndWait();
+		
+		getCollectionTab().doQuery();
 	}
 	
 	@FXML
@@ -232,6 +242,30 @@ public class GUIMainWindow {
 			return;
 		
 		addFile(selectedFile.getAbsolutePath());
+    }
+	
+	@FXML
+	public void menuCollection_delete(ActionEvent event) {
+		Alert confirm = new Alert(AlertType.CONFIRMATION);
+		confirm.setTitle("Delete Collection");
+		confirm.setHeaderText("Delete collection and all files in this collections from database");
+		confirm.setContentText("Are you sure you want to delete this collections and remove all of it's files from the database?");
+		
+		confirm.showAndWait().ifPresent((result) -> {
+			if(result == ButtonType.OK) {
+				executeSQL("DROP TABLE " + getCollection().fileDB.globalName, true);
+				executeSQL("DROP TABLE " + getCollection().tagDB.globalName, true);
+				executeSQL("DROP TABLE " + getCollection().fileTagsDB.globalName, true);
+				executeSQL("DROP TABLE " + getCollection().fieldDB.globalName, true);
+				executeSQL("DROP TABLE " + getCollection().typeValuesDB.globalName, true);
+				executeSQL("DROP TABLE " + getCollection().fileTypesDB.globalName, true);
+				
+				executeSQL("DELETE FROM M_COLLECTIONS WHERE collection = '" + getCollection().name + "'", true);
+				executeSQL("DELETE FROM M_COLLECTIONTYPES WHERE collection = '" + getCollection().name + "'", true);
+				
+				collectionTabs.getTabs().remove(collectionTabs.getSelectionModel().getSelectedItem());
+			}
+		});
     }
 	
 	@FXML
