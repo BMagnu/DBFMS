@@ -55,7 +55,7 @@ public abstract class Thumbnail {
 		
 		try {
 			if(filePath.startsWith("http://") || filePath.startsWith("https://"))
-				return new ThumbnailWeb(filePath); //TODO WebIcon
+				return new ThumbnailWeb(filePath);
 			
 			String mime = "";
 			Path path = Paths.get(filePath);
@@ -195,22 +195,33 @@ public abstract class Thumbnail {
 		g.setColor(Color.BLACK);
 		
 		FontMetrics metrics = g.getFontMetrics(font);
-		int maxWidth = Math.max(metrics.stringWidth(text), Math.max(metrics.stringWidth(text2), metrics.stringWidth(textTop)));
-		float intendedSize = (float)(font.getSize2D() * 290.0f/Math.max(maxWidth, 290));
-		boolean cut = intendedSize < 10.0f;
-		Font fontNew = font.deriveFont(cut ? 10.0f : intendedSize);
+		
+		int maxWidthTop = metrics.stringWidth(textTop);
+		float intendedSizeTop = (float)(font.getSize2D() * 290.0f/Math.max(maxWidthTop, 290));
+		boolean cutTop = intendedSizeTop < 10.0f;
+		Font fontNewTop = font.deriveFont(cutTop ? 10.0f : intendedSizeTop);
+		
+		int maxWidthBot = Math.max(metrics.stringWidth(text), metrics.stringWidth(text2));
+		float intendedSizeBot = (float)(font.getSize2D() * 290.0f/Math.max(maxWidthBot, 290));
+		boolean cutBot = intendedSizeBot < 10.0f;
+		Font fontNewBot = font.deriveFont(cutBot ? 10.0f : intendedSizeBot);
+		
 		int lineDistance = metrics.getHeight();
 		
-		metrics = g.getFontMetrics(fontNew);
-		while(cut && metrics.stringWidth(text) > 290) {
+		metrics = g.getFontMetrics(fontNewBot);
+		g.setFont(fontNewBot);
+
+		//Text1
+		while(cutBot && metrics.stringWidth(text) > 290) {
 			text = text.substring(0, text.length() - 1);
 		}
 	    int x = 150 - (metrics.stringWidth(text) / 2);
 	    int y = 250 - (metrics.getHeight() / 2) + metrics.getAscent();
-	    g.setFont(fontNew);
 	    g.drawString(text, x, y);
+	    
+	    //Text2
 	    if(!text2.isBlank()) {
-			while(cut && metrics.stringWidth(text2) > 290) {
+			while(cutBot && metrics.stringWidth(text2) > 290) {
 				text2 = text2.substring(0, text2.length() - 1);
 			}
 	    	x = 150 - (metrics.stringWidth(text2) / 2);
@@ -218,8 +229,12 @@ public abstract class Thumbnail {
 	    	g.drawString(text2, x, y);
 	    }
 	    
+	    metrics = g.getFontMetrics(fontNewTop);
+		g.setFont(fontNewTop);
+	    
+	    //TextTop
 	    if(!textTop.isBlank()) {
-			while(cut && metrics.stringWidth(textTop) > 290) {
+			while(cutTop && metrics.stringWidth(textTop) > 290) {
 				textTop = textTop.substring(0, textTop.length() - 1);
 			}
 	    	x = 150 - (metrics.stringWidth(textTop) / 2);

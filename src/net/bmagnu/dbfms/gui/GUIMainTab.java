@@ -9,9 +9,10 @@ import java.util.LinkedList;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -108,6 +109,16 @@ public class GUIMainTab {
         	filePaneLocal.setMinHeight(300);
         	filePaneLocal.setMinWidth(300);
         	
+        	FXMLLoader loaderCtx = new FXMLLoader(getClass().getResource("ctxmenu_file.fxml"));
+        	ContextMenu ctxMenu;
+    		try {
+    			ctxMenu = loaderCtx.load();
+    			((CTXMenuFile) loaderCtx.getController()).init(collection, file.filename);
+    		} catch (IOException e) {
+    			Logger.logError(e);
+    			continue;
+    		}
+        	
         	filePaneLocal.setOnMouseClicked((mouseEvent) -> {
         		if(mouseEvent.getButton() == MouseButton.PRIMARY) {
         			try {
@@ -120,16 +131,14 @@ public class GUIMainTab {
 					}
         		}
         		else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
-        			Dialog<DialogAddFileResult> dialog = DialogAddFile.getDialog(collection, file.filename);
-
-        			dialog.showAndWait();
+        			ctxMenu.show(filePaneLocal, mouseEvent.getScreenX(), mouseEvent.getScreenY());
         		}
         	});
         	
         	filePaneLocal.setStyle("-fx-border-color: black");
-        	
+
         	filePane.getChildren().add(filePaneLocal);
         }
-	}
-	
+	}	
 }
+
