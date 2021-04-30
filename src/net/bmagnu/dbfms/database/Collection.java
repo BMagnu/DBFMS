@@ -94,6 +94,9 @@ public class Collection {
 			float rating = 0.0f;
 
 			for (String part : query.split(" ")) {
+				if (part.isBlank())
+					continue;
+				
 				if (part.contains("rating>")) { // RATING
 					try {
 						float localRating = Float.parseFloat(part.split(">")[1]);
@@ -178,8 +181,9 @@ public class Collection {
 		tables.stream().forEach((map) -> {
 			String fileName = (String) map.get("filePath");
 			String fileThumb = (String) map.get("fileThumb");
-			result.put((Integer) map.get("fileID"),
-					new DatabaseFileEntry(fileName, Thumbnail.getThumbnail(fileName, fileThumb), (Float)map.get("rating"), fileThumb));
+			Integer fileId = (Integer) map.get("fileID");
+			result.put(fileId,
+					new DatabaseFileEntry(fileName, Thumbnail.getThumbnail(fileName, fileThumb), (Float)map.get("rating"), fileThumb, fileId));
 		});
 
 		return result;
@@ -263,6 +267,24 @@ public class Collection {
 				}, () -> {
 					Logger.logError("Specified Filepath not in Database");
 				});
+	}
+	
+	public List<Pair<String, Integer>> recommendTags(String tag){
+		List<Pair<String, Integer>> tags = new ArrayList<>();
+		
+		//Alternative Syntax. Probably slower unless I underestimate grouping by string vs by integer
+		/*executeSQL("SELECT tagName, cnt FROM (SELECT tagID, COUNT(*) cnt FROM " + fileTagsDB.globalName + " WHERE tagID IN "
+				+ "(SELECT tagID FROM " + tagDB.globalName + " WHERE tagName LIKE '%" + tag + "%') "
+				+ "GROUP BY tagID ORDER BY cnt DESC FETCH FIRST 10 ROWS ONLY) T_TAGCNT INNER JOIN " + tagDB.globalName
+				+ " ON T_TAGCNT.tagID = "+ tagDB.globalName +".tagID", "tagName", "cnt")*/
+		executeSQL("SELECT tagName, COUNT(*) cnt FROM " + tagDB.globalName + " INNER JOIN " + fileTagsDB.globalName
+				+" ON " + tagDB.globalName + ".tagID = " + fileTagsDB.globalName + ".tagID WHERE tagName LIKE '%" + tag + "%' "
+				+ "GROUP BY " + tagDB.globalName + ".tagName ORDER BY cnt DESC FETCH FIRST 10 ROWS ONLY", "tagName", "cnt")
+				.stream().forEachOrdered(entry -> {
+					tags.add(new Pair<String, Integer>((String) entry.get("tagName"), (Integer) entry.get("cnt"))); 
+				});
+		
+		return tags;
 	}
 
 	public static String sanitize(String raw) {

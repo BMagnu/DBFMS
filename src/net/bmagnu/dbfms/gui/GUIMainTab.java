@@ -20,7 +20,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
-
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.database.DatabaseFileEntry;
 import net.bmagnu.dbfms.database.DatabaseFileEntryComparator;
@@ -48,6 +47,8 @@ public class GUIMainTab {
 	private LinkedList<DatabaseFileEntry> files;
 	private DatabaseFileEntryComparator sorter = new DatabaseFileEntryComparator();
 	
+	//private CTXMenuTagSuggestion ctxTagSuggestion; 
+	
 	public void init(Collection collection) {
 		this.collection = collection;
 		
@@ -64,6 +65,8 @@ public class GUIMainTab {
 			sorter.mode = newV;
 			displayFiles();
 		});
+		
+		CTXMenuTagSuggestion.register(searchQueryField, this.collection);
 		
 		searchFiles("");
 		displayFiles();

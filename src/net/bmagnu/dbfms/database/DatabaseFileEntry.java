@@ -13,6 +13,7 @@ import net.bmagnu.dbfms.util.Thumbnail;
 public class DatabaseFileEntry {
 	
 	public String filename;
+	public int id;
 	public Thumbnail thumbnail;
 	public String thumbHash;
 	public float rating;
@@ -47,11 +48,12 @@ public class DatabaseFileEntry {
 		return created;
 	}
 	
-	public DatabaseFileEntry(String filename, Thumbnail thumbnail, float rating, String thumbHash) {
+	public DatabaseFileEntry(String filename, Thumbnail thumbnail, float rating, String thumbHash, int id) {
 		this.filename = filename;
 		this.thumbnail = thumbnail;
 		this.rating = rating;
 		this.thumbHash = thumbHash;
+		this.id = id;
 	}
 
 }
