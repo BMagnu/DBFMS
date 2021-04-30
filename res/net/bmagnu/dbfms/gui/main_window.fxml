@@ -19,6 +19,7 @@
             <Menu mnemonicParsing="false" text="Database">
               <items>
                 <MenuItem mnemonicParsing="false" onAction="#menuDB_onBackup" text="Backup Database" />
+                <MenuItem mnemonicParsing="false" onAction="#menuDB_onRestore" text="Restore Database" />
               </items>
             </Menu>
             <Menu fx:id="collectionMenu" disable="true" mnemonicParsing="false" text="Collection">

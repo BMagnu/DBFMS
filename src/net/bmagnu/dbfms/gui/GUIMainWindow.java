@@ -188,6 +188,21 @@ public class GUIMainWindow {
     }
 	
 	@FXML
+	public void menuDB_onRestore(ActionEvent event) {
+		FileChooser fileChooser = new FileChooser();
+		
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("ZIP file (*.zip)", "*.zip");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+		File selectedFile = fileChooser.showOpenDialog(collectionTabs.getScene().getWindow());
+		
+		if(selectedFile == null)
+			return;
+		
+		LocalDatabase.restore(selectedFile);
+	}
+	
+	@FXML
 	public void menuCollection_onManageTags(ActionEvent event) {
 		//TODO Implement Tag Management
 		Logger.logWarning("To Be Implemented");

@@ -38,12 +38,13 @@ public class CTXMenuTagSuggestion extends ContextMenu {
 				StackPane.setAlignment(tag, Pos.CENTER_LEFT);
 				StackPane.setAlignment(count, Pos.CENTER_RIGHT);
 				pane.getChildren().addAll(tag, count);
-				pane.setOnMouseEntered(e -> {
+				//Use ContextMenu Highlighting for now 
+				/*pane.setOnMouseEntered(e -> {
 					tag.setStyle("-fx-underline: true;");
 				});
 				pane.setOnMouseExited(e -> {
 					tag.setStyle("-fx-underline: false;");
-				});
+				});*/ 
 				
 				CustomMenuItem item = new CustomMenuItem(pane);	
 				item.setOnAction(e -> {
