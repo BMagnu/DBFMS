@@ -179,6 +179,33 @@ public class GUIMainWindow {
 					}
 				});
 			
+			Path thumbCache = Paths.get(LocalDatabase.programDataDir + "thumbCache");
+			int depthCache = thumbCache.getNameCount();
+			zipOut.putNextEntry(new ZipEntry("thumbs/"));
+			Files.walk(thumbCache)
+			.forEach((file) -> {
+				try {
+					if (file.toFile().isDirectory() && file.compareTo(thumbCache) != 0) {
+						zipOut.putNextEntry(new ZipEntry("thumbs/" + file.subpath(depthCache,file.getNameCount()).toString().replace('\\', '/') + '/'));
+						zipOut.closeEntry();
+					}
+					else if (!file.toFile().isDirectory()) {
+						FileInputStream fis = new FileInputStream(file.toFile());
+				        ZipEntry zipEntry = new ZipEntry("thumbs/" + file.subpath(depthCache,file.getNameCount()).toString().replace('\\', '/'));
+				        zipOut.putNextEntry(zipEntry);
+				        byte[] bytes = new byte[1024];
+				        int length;
+				        while ((length = fis.read(bytes)) >= 0) {
+				            zipOut.write(bytes, 0, length);
+				        }
+				        fis.close();
+					}
+				} catch (IOException e) {
+					Logger.logError(e);
+				}
+			});
+			
+			
 			zipOut.close();
 			fos.close();
 		} catch (IOException e) {

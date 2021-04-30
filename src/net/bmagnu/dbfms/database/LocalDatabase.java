@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -220,6 +221,17 @@ public class LocalDatabase {
 			Connection newConn = DriverManager.getConnection(backupURL);
 			newConn.commit();
 			
+			Files.walk(backupDB.resolve("thumbs"))
+			.forEach((file) -> {
+				if(!Files.isDirectory(file)) {
+					try {
+						Files.copy(file, Paths.get(LocalDatabase.programDataDir + "thumbCache").resolve(file.getName(file.getNameCount() - 1)), StandardCopyOption.REPLACE_EXISTING);
+					} catch (IOException e) {
+						Logger.logError(e);
+					}
+				}
+			});
+			
 			Logger.logInfo("Restored DB Backup with " + backupURL);
 			
 			Alert alert = new Alert(AlertType.INFORMATION);
@@ -229,7 +241,7 @@ public class LocalDatabase {
 			alert.showAndWait();
 			
 			System.exit(0);
-		} catch (SQLException e) {
+		} catch (SQLException | IOException e) {
 			Logger.logError(e);
 		}
 	}
