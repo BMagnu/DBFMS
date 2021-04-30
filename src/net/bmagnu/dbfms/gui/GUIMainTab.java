@@ -1,6 +1,8 @@
 package net.bmagnu.dbfms.gui;
 
 import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -10,6 +12,7 @@ import java.util.LinkedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -20,6 +23,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
+import javafx.scene.layout.VBox;
+import javafx.util.Pair;
 import net.bmagnu.dbfms.database.Collection;
 import net.bmagnu.dbfms.database.DatabaseFileEntry;
 import net.bmagnu.dbfms.database.DatabaseFileEntryComparator;
@@ -41,6 +46,9 @@ public class GUIMainTab {
 	
 	@FXML
 	private Label labelPerformance;
+	
+	@FXML
+	private VBox relevantTagBox;
 	
 	public Collection collection;
 	
@@ -76,8 +84,12 @@ public class GUIMainTab {
     }
 	
 	public void doQuery() {
+		doQuery(searchQueryField.getText());
+	}
+	
+	public void doQuery(String text) {
 		long time1 = System.nanoTime(), time2, time3;
-		searchFiles(searchQueryField.getText());
+		searchFiles(text);
 		
 		time2 = System.nanoTime();
        
@@ -143,6 +155,30 @@ public class GUIMainTab {
         	filePaneLocal.setStyle("-fx-border-color: black");
 
         	filePane.getChildren().add(filePaneLocal);
+        }
+        
+        relevantTagBox.getChildren().clear();
+        for (Pair<String, Integer> tag : collection.relevantTags(files)) {
+        	StackPane pane = new StackPane();
+        	VBox.setMargin(pane, new Insets(1.5, 7, 1.5, 7));
+			Label tagL = new Label(tag.getKey());
+			Label count = new Label(tag.getValue().toString());
+			StackPane.setAlignment(tagL, Pos.CENTER_LEFT);
+			StackPane.setAlignment(count, Pos.CENTER_RIGHT);
+			pane.getChildren().addAll(tagL, count);
+			pane.setOnMouseEntered(e -> {
+				tagL.setStyle("-fx-underline: true;");
+			});
+			pane.setOnMouseExited(e -> {
+				tagL.setStyle("-fx-underline: false;");
+			});
+			pane.setOnMouseClicked(mouseEvent -> {
+				if(mouseEvent.getButton() == MouseButton.PRIMARY) 
+					doQuery(tag.getKey());
+				else
+					Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(tag.getKey()), null);
+			});
+			relevantTagBox.getChildren().add(pane);
         }
 	}	
 }

@@ -32,9 +32,12 @@
                   </HBox>
                </children>
             </VBox>
-            <ScrollPane hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+            <ScrollPane fx:id="relevantTagScrollPane" hbarPolicy="NEVER" prefHeight="200.0" prefWidth="200.0" vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                 <VBox fx:id="relevantTagBox" prefWidth="${relevantTagScrollPane.width - 16}" spacing="0.0">
+               		<children>
+                    </children>
+                 </VBox>
               </content>
             </ScrollPane>
             <Label fx:id="labelPerformance">

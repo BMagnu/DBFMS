@@ -21,6 +21,19 @@ public class SQLQueryHelper {
 		return builder.toString();
 	}
 	
+	public static String buildSQLFileIDList(List<DatabaseFileEntry> items) {
+		StringBuilder builder = new StringBuilder();
+		
+		for(int i = 0; i < items.size(); i++) {
+			if(i != 0)
+				builder.append(", ");
+				
+			builder.append(items.get(i).id);
+		}
+		
+		return builder.toString();
+	}
+	
 	public static String buildSQLTypeList(List<Pair<String, String>> types) {
 		StringBuilder findTypeIDs = new StringBuilder();
 		

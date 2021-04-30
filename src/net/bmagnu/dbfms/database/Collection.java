@@ -286,6 +286,25 @@ public class Collection {
 		
 		return tags;
 	}
+	
+	public List<Pair<String, Integer>> relevantTags(List<DatabaseFileEntry> files){
+		List<Pair<String, Integer>> tags = new ArrayList<>();
+		
+		//Alternative Syntax. Probably slower unless I underestimate grouping by string vs by integer
+		/*executeSQL("SELECT tagName, cnt FROM (SELECT tagID, COUNT(*) cnt FROM " + fileTagsDB.globalName + " WHERE tagID IN "
+				+ "(SELECT tagID FROM " + tagDB.globalName + " WHERE tagName LIKE '%" + tag + "%') "
+				+ "GROUP BY tagID ORDER BY cnt DESC FETCH FIRST 10 ROWS ONLY) T_TAGCNT INNER JOIN " + tagDB.globalName
+				+ " ON T_TAGCNT.tagID = "+ tagDB.globalName +".tagID", "tagName", "cnt")*/
+		executeSQL("SELECT tagName, COUNT(*) cnt FROM " + tagDB.globalName + " INNER JOIN " + fileTagsDB.globalName
+				+" ON " + tagDB.globalName + ".tagID = " + fileTagsDB.globalName + ".tagID WHERE fileID IN ("
+				+ SQLQueryHelper.buildSQLFileIDList(files)
+				+ ") GROUP BY " + tagDB.globalName + ".tagName ORDER BY cnt DESC FETCH FIRST 25 ROWS ONLY", "tagName", "cnt")
+				.stream().forEachOrdered(entry -> {
+					tags.add(new Pair<String, Integer>((String) entry.get("tagName"), (Integer) entry.get("cnt"))); 
+				});
+		
+		return tags;
+	}
 
 	public static String sanitize(String raw) {
 		return raw.trim().replace(' ', '_').replace('.', '_').replace(':', '_').replace('>', '_').toLowerCase(Locale.ENGLISH);

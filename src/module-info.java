@@ -20,6 +20,8 @@ module dbfms {
 	
 	requires java.sql;
 	
+	requires java.datatransfer;
+	
 	requires java.desktop;
 	
 	requires java.net.http;
@@ -35,6 +37,6 @@ module dbfms {
 	requires org.apache.derby.commons;
 	
 	requires org.apache.derby.engine;
-	
+
 	opens net.bmagnu.dbfms.gui to javafx.fxml, javafx.graphics;
 }
