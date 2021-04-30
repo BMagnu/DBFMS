@@ -49,8 +49,12 @@ public class CTXMenuTagSuggestion extends ContextMenu {
 				item.setOnAction(e -> {
 					String text = textField.getText();
 					int caret = textField.getCaretPosition();
-					int start = Math.max(text.lastIndexOf(" ", caret - 1) + 1, 0);
+					int start = text.lastIndexOf(" ", caret - 1) + 1;
 					int stop = text.indexOf(" ", caret);
+					
+					if (text.charAt(start) == '~' || text.charAt(start) == '-')
+						start++;
+					
 					stop = stop == -1 ? text.length() : stop;
 					String textNew = text.substring(0, start) + entry.getKey() + text.substring(stop) + ' ';
 					textField.setText(textNew);
@@ -63,11 +67,13 @@ public class CTXMenuTagSuggestion extends ContextMenu {
 		
 		textField.textProperty().addListener((obs, oldV, newV) -> {
 			int caret = textField.getCaretPosition() + (oldV.length() > newV.length() ? -1 : 1);
-			int start = Math.max(newV.lastIndexOf(" ", caret - 1) + 1, 0);
+			int start = newV.lastIndexOf(" ", caret - 1) + 1;
 			int stop = newV.indexOf(" ", caret);
 			stop = stop == -1 ? newV.length() : stop;
 			String currentTag = newV.substring(start, stop);
 			
+			if (currentTag.startsWith("~") || currentTag.startsWith("-"))
+				currentTag = currentTag.substring(1);
 			
 			if (currentTag.length() < 3) {
 				if (isShowing())
@@ -75,6 +81,19 @@ public class CTXMenuTagSuggestion extends ContextMenu {
 				return;
 			}
 			List<Pair<String, Integer>> suggestions = collection.recommendTags(currentTag);
+			
+			if(entries.size() == suggestions.size()) {
+				boolean different = false;
+				for(int i = 0; i < suggestions.size(); i++) {
+					if (!entries.get(i).equals(suggestions.get(i))) {
+						different = true;
+					}
+				}
+				
+				if(!different)
+					return;
+			}
+			
 			entries.setAll(suggestions);	
 			
 			if(suggestions.isEmpty()) {

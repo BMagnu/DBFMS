@@ -288,6 +288,6 @@ public class Collection {
 	}
 
 	public static String sanitize(String raw) {
-		return raw.replace(' ', '_').replace('.', '_').replace(':', '_').replace('>', '_').toLowerCase(Locale.ENGLISH);
+		return raw.trim().replace(' ', '_').replace('.', '_').replace(':', '_').replace('>', '_').toLowerCase(Locale.ENGLISH);
 	}
 }

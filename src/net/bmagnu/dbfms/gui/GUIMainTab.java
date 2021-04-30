@@ -46,9 +46,7 @@ public class GUIMainTab {
 	
 	private LinkedList<DatabaseFileEntry> files;
 	private DatabaseFileEntryComparator sorter = new DatabaseFileEntryComparator();
-	
-	//private CTXMenuTagSuggestion ctxTagSuggestion; 
-	
+
 	public void init(Collection collection) {
 		this.collection = collection;
 		

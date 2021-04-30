@@ -170,7 +170,7 @@ public class DialogAddFile {
 			checkCache.setDisable(thumbnail.shouldCache());
 		}
 		
-		// TODO Tag Recommendations
+		CTXMenuTagSuggestion.register(textTag, collection);
 	}
 
 	@FXML
