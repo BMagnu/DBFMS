@@ -85,7 +85,10 @@
                         <VBox fx:id="listTypes" />
                      </content>
                   </ScrollPane>
-                  <Button mnemonicParsing="false" onAction="#manageTypes" prefWidth="105.0" text="Manage Types" />
+                  <VBox prefHeight="${textTag.height}" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                  <!-- Spacer for Button -->
+                  </VBox>
+                  <!-- <Button mnemonicParsing="false" onAction="#manageTypes" prefWidth="105.0" text="Manage Types" /> TODO -->
                </children>
             </VBox>
          </children>

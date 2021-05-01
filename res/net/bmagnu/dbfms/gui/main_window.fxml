@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -24,10 +25,11 @@
             </Menu>
             <Menu fx:id="collectionMenu" disable="true" mnemonicParsing="false" text="Collection">
               <items>
-                <MenuItem mnemonicParsing="false" onAction="#menuCollection_onManageTags" text="Manage Tags" />
+                <!-- <MenuItem mnemonicParsing="false" onAction="#menuCollection_onManageTags" text="Manage Tags" /> -->
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddFile" text="Add File" />
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddURL" text="Add URL" />
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_onAddDir" text="Add Directory" />
+                <SeparatorMenuItem mnemonicParsing="false" />
                 <MenuItem mnemonicParsing="false" onAction="#menuCollection_delete" text="Delete Collection" />
               </items>
             </Menu>

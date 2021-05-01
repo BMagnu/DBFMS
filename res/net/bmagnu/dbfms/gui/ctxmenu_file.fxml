@@ -9,6 +9,6 @@
     <MenuItem mnemonicParsing="false" onAction="#onEditFile" text="Edit File" />
     <SeparatorMenuItem mnemonicParsing="false" />
     <MenuItem mnemonicParsing="false" onAction="#onDeleteFile" text="Remove Entry" />
-    <MenuItem mnemonicParsing="false" onAction="#onRunShell" text="Run With Command Line" />
+    <!-- <MenuItem mnemonicParsing="false" onAction="#onRunShell" text="Run With Command Line" /> -->
   </items>
 </ContextMenu>
