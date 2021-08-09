@@ -1,1 +1,1 @@
-./bin/java --module dbfms/net.bmagnu.dbfms.Main
+./bin/java -Dfile.encoding=UTF-8 --module dbfms/net.bmagnu.dbfms.Main

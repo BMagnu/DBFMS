@@ -11,6 +11,10 @@ import static  javafx.application.Application.launch;
 public class Main {
 	
 	final static public Properties properties = new Properties();
+	
+	static {
+		System.setProperty("sun.jnu.encoding", "UTF-8");
+	}
 
 	public static void main(String[] args) throws IOException {
 		properties.load(Main.class.getResourceAsStream("dbfms.properties"));
